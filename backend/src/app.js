@@ -39,8 +39,8 @@ app.use('/api/reports', reportRoutes);
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
 app.use((err, req, res, next) => {
-  console.error(err);
-  res.status(500).json({ error: 'Erro interno do servidor' });
+  console.error('Erro:', err);
+  res.status(500).json({ error: err.message || 'Erro interno do servidor' });
 });
 
 export default app;

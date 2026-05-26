@@ -145,7 +145,8 @@ if (dbUrl) {
     db = { prepare, exec };
   } catch (e) {
     console.error('[DB] Erro ao conectar no PostgreSQL:', e.message);
-    dbError = e.message;
+    dbError = e.message + (e.code ? ` (${e.code})` : '');
+    console.error('[DB] Erro ao conectar no PostgreSQL:', dbError);
     db = {
       prepare: () => ({
         get: async () => { throw new Error('Database offline: ' + dbError); },
