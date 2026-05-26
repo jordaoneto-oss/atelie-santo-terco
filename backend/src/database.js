@@ -70,6 +70,7 @@ if (dbUrl) {
     CREATE TABLE IF NOT EXISTS customers (
       id SERIAL PRIMARY KEY,
       user_id INTEGER NOT NULL REFERENCES users(id),
+      cpf TEXT,
       name TEXT NOT NULL,
       email TEXT,
       phone TEXT,
@@ -190,6 +191,7 @@ if (dbUrl) {
     CREATE TABLE IF NOT EXISTS customers (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
+      cpf TEXT,
       name TEXT NOT NULL,
       email TEXT,
       phone TEXT,
@@ -260,6 +262,7 @@ if (dbUrl) {
   try { s.exec('ALTER TABLE customers ADD COLUMN delivery_city TEXT'); } catch {}
   try { s.exec('ALTER TABLE customers ADD COLUMN delivery_state TEXT'); } catch {}
   try { s.exec('ALTER TABLE customers ADD COLUMN delivery_zipcode TEXT'); } catch {}
+  try { s.exec('ALTER TABLE customers ADD COLUMN cpf TEXT'); } catch {}
   try { s.exec('ALTER TABLE products ADD COLUMN crucifixo TEXT'); } catch {}
   try { s.exec('ALTER TABLE products ADD COLUMN entremeio TEXT'); } catch {}
   try { s.exec('ALTER TABLE products ADD COLUMN contas TEXT'); } catch {}
