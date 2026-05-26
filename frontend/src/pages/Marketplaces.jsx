@@ -83,12 +83,12 @@ export default function Marketplaces() {
       <h1 className="text-2xl font-bold text-brown-800 font-serif mb-6">Integrações com Marketplaces</h1>
       <p className="text-brown-600 mb-6">Conecte sua loja aos principais marketplaces para gerenciar vendas centralizadamente.</p>
 
-      <div className="flex gap-2 mb-6">
+      <div className="flex gap-2 mb-6 overflow-x-auto pb-2 -mx-4 px-4 snap-x">
         {Object.entries(MARKETPLACE_INFO).map(([key, m]) => {
           const isConnected = integrations.some(i => i.marketplace === key);
           return (
             <button key={key} onClick={() => setActiveTab(key)}
-              className={`flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium ${activeTab === key ? 'bg-gold-600 text-white' : 'bg-white border border-gold-200 text-brown-600 hover:bg-gold-50'}`}>
+              className={`flex items-center gap-2 px-4 py-3 rounded-lg text-sm font-medium snap-start shrink-0 ${activeTab === key ? 'bg-gold-600 text-white' : 'bg-white border border-gold-200 text-brown-600 hover:bg-gold-50'}`}>
               <span>{m.icon}</span>
               <span>{m.name}</span>
               {isConnected && <span className="w-2 h-2 rounded-full bg-green-500 ml-1" title="Conectado" />}
@@ -111,14 +111,14 @@ export default function Marketplaces() {
           )}
         </div>
 
-        <form onSubmit={handleSave} className="space-y-4">
+          <form onSubmit={handleSave} className="space-y-4">
           {info?.fields.map(f => (
             <div key={f.key}>
               <label className="text-sm font-medium text-brown-700 block mb-1">{f.label}</label>
-              <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite" placeholder={f.placeholder} value={form[f.key] || ''} onChange={setField(f.key)} />
+              <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite text-sm" placeholder={f.placeholder} value={form[f.key] || ''} onChange={setField(f.key)} />
             </div>
           ))}
-          <button className="bg-gold-600 text-white px-6 py-3 rounded-lg hover:bg-gold-700 font-medium">
+          <button className="w-full sm:w-auto bg-gold-600 text-white px-6 py-3 rounded-lg hover:bg-gold-700 font-medium">
             {current ? 'Atualizar Credenciais' : 'Conectar'}
           </button>
         </form>

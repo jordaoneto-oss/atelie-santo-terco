@@ -53,12 +53,12 @@ export default function ProductForm() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="bg-white rounded-xl p-6 shadow-md border border-gold-200">
           <h2 className="font-medium text-brown-700 mb-4 font-serif">Informações Básicas</h2>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="col-span-2">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="sm:col-span-2">
               <label className="text-sm font-medium text-brown-700">Nome *</label>
               <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite mt-1" value={form.name} onChange={set('name')} required />
             </div>
-            <div className="col-span-2">
+            <div className="sm:col-span-2">
               <label className="text-sm font-medium text-brown-700">Descrição</label>
               <textarea className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite mt-1" rows={3} value={form.description} onChange={set('description')} />
             </div>
@@ -99,7 +99,7 @@ export default function ProductForm() {
 
         <div className="bg-white rounded-xl p-6 shadow-md border border-gold-200">
           <h2 className="font-medium text-brown-700 mb-4 font-serif">Materiais</h2>
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="text-sm font-medium text-brown-700">Crucifixo</label>
               <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite mt-1" value={form.crucifixo} onChange={set('crucifixo')} placeholder="Ex: Cruz de São Bento" />

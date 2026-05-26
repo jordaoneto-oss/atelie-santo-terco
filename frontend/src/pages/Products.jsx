@@ -22,12 +22,14 @@ export default function Products() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-brown-800 font-serif">Produtos</h1>
-        <Link to="/produtos/novo" className="bg-gold-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-gold-700">+ Novo Produto</Link>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-brown-800 font-serif">Produtos</h1>
+        <Link to="/produtos/novo" className="bg-gold-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-gold-700 shrink-0">+ Novo Produto</Link>
       </div>
       <input className="w-full p-3 rounded-lg border border-gold-200 bg-white mb-4 placeholder:text-brown-300" placeholder="Buscar produtos..." value={search} onChange={e => setSearch(e.target.value)} />
-      <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gold-200">
+
+      {/* Desktop table */}
+      <div className="hidden md:block bg-white rounded-xl shadow-md overflow-hidden border border-gold-200">
         <table className="w-full">
           <thead className="bg-gold-50">
             <tr>
@@ -59,6 +61,31 @@ export default function Products() {
             {products.length === 0 && <tr><td colSpan={6} className="p-8 text-center text-brown-400">Nenhum produto encontrado</td></tr>}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile cards */}
+      <div className="md:hidden space-y-3">
+        {products.map(p => (
+          <div key={p.id} className="bg-white rounded-xl p-4 shadow-sm border border-gold-200">
+            <div className="flex justify-between items-start mb-2">
+              <div className="flex-1 min-w-0 mr-2">
+                <div className="font-medium text-brown-800 text-sm truncate">{p.name}</div>
+                <div className="text-xs text-brown-400 mt-0.5 line-clamp-2">{p.description || 'Sem descrição'}</div>
+              </div>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 ${statusColors[p.status] || statusColors.active}`}>{p.status}</span>
+            </div>
+            <div className="flex items-center gap-3 text-xs text-brown-600 mb-3">
+              <span className="px-2 py-0.5 rounded-full bg-gold-100 text-gold-700 font-medium">{p.categoria || '-'}</span>
+              <span className="font-medium text-gold-700">R$ {p.price.toFixed(2)}</span>
+              <span>Est: {p.stock}</span>
+            </div>
+            <div className="flex gap-2 pt-2 border-t border-gold-100">
+              <Link to={`/produtos/${p.id}`} className="flex-1 text-center text-sm text-gold-600 py-2 rounded-lg border border-gold-200 hover:bg-gold-50">Editar</Link>
+              <button onClick={() => handleDelete(p.id)} className="flex-1 text-sm text-rose-600 py-2 rounded-lg border border-rose-200 hover:bg-rose-50">Remover</button>
+            </div>
+          </div>
+        ))}
+        {products.length === 0 && <p className="text-center text-brown-400 py-8">Nenhum produto encontrado</p>}
       </div>
     </div>
   );

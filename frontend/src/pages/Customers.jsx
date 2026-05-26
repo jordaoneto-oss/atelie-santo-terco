@@ -66,42 +66,40 @@ export default function Customers() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-brown-800 font-serif">Clientes</h1>
-        <button onClick={() => { resetForm(); setShowForm(true); }} className="bg-gold-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-gold-700">+ Novo Cliente</button>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
+        <h1 className="text-xl sm:text-2xl font-bold text-brown-800 font-serif">Clientes</h1>
+        <button onClick={() => { resetForm(); setShowForm(true); }} className="bg-gold-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-gold-700 shrink-0">+ Novo Cliente</button>
       </div>
       <input className="w-full p-3 rounded-lg border border-gold-200 bg-white mb-4 placeholder:text-brown-300" placeholder="Buscar clientes..." value={search} onChange={e => setSearch(e.target.value)} />
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="bg-white rounded-xl p-6 shadow-md mb-6 border border-gold-200">
+        <form onSubmit={handleSubmit} className="bg-white rounded-xl p-4 sm:p-6 shadow-md mb-6 border border-gold-200">
           <h2 className="font-semibold text-brown-700 mb-4 font-serif">{editing ? 'Editar' : 'Novo'} Cliente</h2>
 
           <div className="text-sm font-medium text-brown-600 mb-2">Dados Pessoais</div>
-          <div className="grid grid-cols-2 gap-4 mb-6">
-            <input className="p-3 rounded-lg border border-gold-200 bg-offwhite" placeholder="Nome *" value={form.name} onChange={setField('name')} required />
-            <input className="p-3 rounded-lg border border-gold-200 bg-offwhite" placeholder="Email" type="email" value={form.email} onChange={setField('email')} />
-            <input className="p-3 rounded-lg border border-gold-200 bg-offwhite" placeholder="Telefone" value={form.phone} onChange={setField('phone')} />
-            <input className="p-3 rounded-lg border border-gold-200 bg-offwhite" placeholder="Instagram" value={form.instagram} onChange={setField('instagram')} />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <input className="p-3 rounded-lg border border-gold-200 bg-offwhite text-sm" placeholder="Nome *" value={form.name} onChange={setField('name')} required />
+            <input className="p-3 rounded-lg border border-gold-200 bg-offwhite text-sm" placeholder="Email" type="email" value={form.email} onChange={setField('email')} />
+            <input className="p-3 rounded-lg border border-gold-200 bg-offwhite text-sm" placeholder="Telefone" value={form.phone} onChange={setField('phone')} />
+            <input className="p-3 rounded-lg border border-gold-200 bg-offwhite text-sm" placeholder="Instagram" value={form.instagram} onChange={setField('instagram')} />
           </div>
 
           <div className="text-sm font-medium text-brown-600 mb-2">Endereço</div>
-          <div className="grid grid-cols-3 gap-4 mb-6">
-            <div className="col-span-2">
-              <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite" placeholder="Rua / Avenida" value={form.address_street} onChange={setField('address_street')} />
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div className="sm:col-span-2">
+              <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite text-sm" placeholder="Rua / Avenida" value={form.address_street} onChange={setField('address_street')} />
             </div>
-            <input className="p-3 rounded-lg border border-gold-200 bg-offwhite" placeholder="Número" value={form.address_number} onChange={setField('address_number')} />
-            <input className="p-3 rounded-lg border border-gold-200 bg-offwhite" placeholder="Bairro" value={form.address_neighborhood} onChange={setField('address_neighborhood')} />
-            <input className="p-3 rounded-lg border border-gold-200 bg-offwhite" placeholder="Cidade" value={form.address_city} onChange={setField('address_city')} />
-            <select className="p-3 rounded-lg border border-gold-200 bg-offwhite text-brown-600" value={form.address_state} onChange={setField('address_state')}>
+            <input className="p-3 rounded-lg border border-gold-200 bg-offwhite text-sm" placeholder="Número" value={form.address_number} onChange={setField('address_number')} />
+            <input className="p-3 rounded-lg border border-gold-200 bg-offwhite text-sm" placeholder="Bairro" value={form.address_neighborhood} onChange={setField('address_neighborhood')} />
+            <input className="p-3 rounded-lg border border-gold-200 bg-offwhite text-sm" placeholder="Cidade" value={form.address_city} onChange={setField('address_city')} />
+            <select className="p-3 rounded-lg border border-gold-200 bg-offwhite text-brown-600 text-sm" value={form.address_state} onChange={setField('address_state')}>
               <option value="">UF</option>
               {UF_LIST.map(uf => <option key={uf} value={uf}>{uf}</option>)}
             </select>
-            <input className="p-3 rounded-lg border border-gold-200 bg-offwhite" placeholder="CEP" value={form.address_zipcode} onChange={setField('address_zipcode')} />
+            <input className="p-3 rounded-lg border border-gold-200 bg-offwhite text-sm" placeholder="CEP" value={form.address_zipcode} onChange={setField('address_zipcode')} />
           </div>
 
-          <div className="col-span-3">
-            <textarea className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite" placeholder="Observações" rows={2} value={form.notes} onChange={setField('notes')} />
-          </div>
+          <textarea className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite text-sm" placeholder="Observações" rows={2} value={form.notes} onChange={setField('notes')} />
 
           <div className="flex gap-3 mt-4">
             <button className="bg-gold-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-gold-700">{editing ? 'Atualizar' : 'Criar'}</button>
@@ -110,7 +108,8 @@ export default function Customers() {
         </form>
       )}
 
-      <div className="bg-white rounded-xl shadow-md overflow-hidden border border-gold-200">
+      {/* Desktop table */}
+      <div className="hidden md:block bg-white rounded-xl shadow-md overflow-hidden border border-gold-200">
         <table className="w-full">
           <thead className="bg-gold-50">
             <tr>
@@ -139,6 +138,26 @@ export default function Customers() {
             {customers.length === 0 && <tr><td colSpan={6} className="p-8 text-center text-brown-400">Nenhum cliente encontrado</td></tr>}
           </tbody>
         </table>
+      </div>
+
+      {/* Mobile cards */}
+      <div className="md:hidden space-y-3">
+        {customers.map(c => (
+          <div key={c.id} className="bg-white rounded-xl p-4 shadow-sm border border-gold-200">
+            <div className="font-medium text-brown-800 text-sm mb-1">{c.name}</div>
+            <div className="space-y-1 text-xs text-brown-500 mb-3">
+              {c.email && <div>📧 {c.email}</div>}
+              {c.phone && <div>📞 {c.phone}</div>}
+              {c.address_city && <div>📍 {c.address_city}/{c.address_state || ''}</div>}
+              {c.instagram && <div>📷 <a href={`https://instagram.com/${c.instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="text-rose-600">{c.instagram}</a></div>}
+            </div>
+            <div className="flex gap-2 pt-2 border-t border-gold-100">
+              <button onClick={() => handleEdit(c)} className="flex-1 text-sm text-gold-600 py-2 rounded-lg border border-gold-200 hover:bg-gold-50">Editar</button>
+              <button onClick={() => handleDelete(c.id)} className="flex-1 text-sm text-rose-600 py-2 rounded-lg border border-rose-200 hover:bg-rose-50">Remover</button>
+            </div>
+          </div>
+        ))}
+        {customers.length === 0 && <p className="text-center text-brown-400 py-8">Nenhum cliente encontrado</p>}
       </div>
     </div>
   );

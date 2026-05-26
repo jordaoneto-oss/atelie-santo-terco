@@ -59,13 +59,15 @@ export default function OrderForm() {
             <button type="button" onClick={addItem} className="text-sm text-gold-600 hover:underline">+ Adicionar item</button>
           </div>
           {items.map((item, i) => (
-            <div key={i} className="flex gap-2 mb-2 items-end">
-              <select className="flex-1 p-3 rounded-lg border border-gold-200 bg-offwhite" value={item.product_id} onChange={setItem(i, 'product_id')}>
+            <div key={i} className="flex flex-col sm:flex-row gap-2 mb-2">
+              <select className="w-full sm:flex-1 p-3 rounded-lg border border-gold-200 bg-offwhite text-sm" value={item.product_id} onChange={setItem(i, 'product_id')}>
                 <option value="">Selecione...</option>
                 {products.map(p => <option key={p.id} value={p.id}>{p.name} - R$ {p.price.toFixed(2)}</option>)}
               </select>
-              <input className="w-20 p-3 rounded-lg border border-gold-200 bg-offwhite text-center" type="number" min="1" value={item.quantity} onChange={setItem(i, 'quantity')} />
-              {items.length > 1 && <button type="button" onClick={() => removeItem(i)} className="text-rose-600 text-sm px-2">✕</button>}
+              <div className="flex gap-2 items-center">
+                <input className="w-full sm:w-20 p-3 rounded-lg border border-gold-200 bg-offwhite text-center text-sm" type="number" min="1" value={item.quantity} onChange={setItem(i, 'quantity')} />
+                {items.length > 1 && <button type="button" onClick={() => removeItem(i)} className="text-rose-600 text-sm px-3 py-3">✕</button>}
+              </div>
             </div>
           ))}
         </div>

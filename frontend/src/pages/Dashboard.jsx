@@ -23,41 +23,41 @@ export default function Dashboard() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-brown-800 font-serif mb-6">Dashboard</h1>
-      <div className="grid grid-cols-5 gap-4 mb-8">
+      <h1 className="text-xl sm:text-2xl font-bold text-brown-800 font-serif mb-4 sm:mb-6">Dashboard</h1>
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4 mb-6 sm:mb-8">
         {cards.map(c => (
-          <div key={c.label} className={`${c.color} rounded-xl p-5 text-white shadow-md`}>
-            <div className="text-2xl mb-1">{c.icon}</div>
-            <div className="text-2xl font-bold">{c.value}</div>
-            <div className="text-sm opacity-80">{c.label}</div>
+          <div key={c.label} className={`${c.color} rounded-xl p-3 sm:p-5 text-white shadow-md`}>
+            <div className="text-lg sm:text-2xl mb-1">{c.icon}</div>
+            <div className="text-lg sm:text-2xl font-bold truncate">{c.value}</div>
+            <div className="text-[10px] sm:text-sm opacity-80">{c.label}</div>
           </div>
         ))}
       </div>
 
-      <div className="grid grid-cols-2 gap-6">
-        <div className="bg-white rounded-xl p-6 shadow-md border border-gold-200">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
+        <div className="bg-white rounded-xl p-4 sm:p-6 shadow-md border border-gold-200">
           <h2 className="font-semibold text-brown-700 mb-4 font-serif">Ações Rápidas</h2>
           <div className="grid grid-cols-2 gap-3">
-            <Link to="/produtos/novo" className="p-4 bg-gold-50 rounded-xl text-center hover:bg-gold-100 border border-gold-200">
-              <div className="text-2xl mb-1">➕</div>
-              <div className="text-sm font-medium text-brown-700">Novo Produto</div>
+            <Link to="/produtos/novo" className="p-3 sm:p-4 bg-gold-50 rounded-xl text-center hover:bg-gold-100 border border-gold-200">
+              <div className="text-xl sm:text-2xl mb-1">➕</div>
+              <div className="text-xs sm:text-sm font-medium text-brown-700">Novo Produto</div>
             </Link>
-            <Link to="/pedidos/novo" className="p-4 bg-rose-50 rounded-xl text-center hover:bg-rose-100 border border-rose-200">
-              <div className="text-2xl mb-1">📝</div>
-              <div className="text-sm font-medium text-rose-700">Novo Pedido</div>
+            <Link to="/pedidos/novo" className="p-3 sm:p-4 bg-rose-50 rounded-xl text-center hover:bg-rose-100 border border-rose-200">
+              <div className="text-xl sm:text-2xl mb-1">📝</div>
+              <div className="text-xs sm:text-sm font-medium text-rose-700">Novo Pedido</div>
             </Link>
-            <Link to="/clientes" className="p-4 bg-brown-50 rounded-xl text-center hover:bg-brown-100 border border-brown-200">
-              <div className="text-2xl mb-1">👤</div>
-              <div className="text-sm font-medium text-brown-700">Novo Cliente</div>
+            <Link to="/clientes" className="p-3 sm:p-4 bg-brown-50 rounded-xl text-center hover:bg-brown-100 border border-brown-200">
+              <div className="text-xl sm:text-2xl mb-1">👤</div>
+              <div className="text-xs sm:text-sm font-medium text-brown-700">Novo Cliente</div>
             </Link>
-            <Link to="/produtos" className="p-4 bg-gold-50 rounded-xl text-center hover:bg-gold-100 border border-gold-200">
-              <div className="text-2xl mb-1">📋</div>
-              <div className="text-sm font-medium text-brown-700">Ver Produtos</div>
+            <Link to="/produtos" className="p-3 sm:p-4 bg-gold-50 rounded-xl text-center hover:bg-gold-100 border border-gold-200">
+              <div className="text-xl sm:text-2xl mb-1">📋</div>
+              <div className="text-xs sm:text-sm font-medium text-brown-700">Ver Produtos</div>
             </Link>
           </div>
         </div>
 
-        <div className="bg-white rounded-xl p-6 shadow-md border border-gold-200">
+        <div className="bg-white rounded-xl p-4 sm:p-6 shadow-md border border-gold-200">
           <h2 className="font-semibold text-brown-700 mb-4 font-serif">Pedidos Pendentes</h2>
           {orders.length === 0 ? (
             <p className="text-brown-400 text-sm">Nenhum pedido pendente</p>
@@ -65,11 +65,11 @@ export default function Dashboard() {
             <div className="space-y-2">
               {orders.slice(0, 5).map(o => (
                 <div key={o.id} className="flex justify-between items-center p-3 bg-offwhite rounded-lg border border-gold-100">
-                  <div>
-                    <div className="text-sm font-medium text-brown-800">Pedido #{o.id}</div>
-                    <div className="text-xs text-brown-500">{o.customer?.name || 'Sem cliente'}</div>
+                  <div className="min-w-0 flex-1 mr-2">
+                    <div className="text-sm font-medium text-brown-800 truncate">Pedido #{o.id}</div>
+                    <div className="text-xs text-brown-500 truncate">{o.customer?.name || 'Sem cliente'}</div>
                   </div>
-                  <div className="text-sm font-semibold text-gold-700">R$ {o.total.toFixed(2)}</div>
+                  <div className="text-sm font-semibold text-gold-700 shrink-0">R$ {o.total.toFixed(2)}</div>
                 </div>
               ))}
             </div>
