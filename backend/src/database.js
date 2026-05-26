@@ -89,7 +89,8 @@ if (dbUrl) {
       delivery_zipcode TEXT,
       instagram TEXT,
       notes TEXT,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE IF NOT EXISTS orders (
       id SERIAL PRIMARY KEY,
@@ -98,7 +99,8 @@ if (dbUrl) {
       status TEXT DEFAULT 'pending',
       total REAL NOT NULL DEFAULT 0,
       notes TEXT,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     CREATE TABLE IF NOT EXISTS order_items (
       id SERIAL PRIMARY KEY,
@@ -208,6 +210,7 @@ if (dbUrl) {
       instagram TEXT,
       notes TEXT,
       created_at TEXT DEFAULT (datetime('now')),
+      updated_at TEXT DEFAULT (datetime('now')),
       FOREIGN KEY (user_id) REFERENCES users(id)
     );
     CREATE TABLE IF NOT EXISTS orders (
@@ -218,6 +221,7 @@ if (dbUrl) {
       total REAL NOT NULL DEFAULT 0,
       notes TEXT,
       created_at TEXT DEFAULT (datetime('now')),
+      updated_at TEXT DEFAULT (datetime('now')),
       FOREIGN KEY (user_id) REFERENCES users(id),
       FOREIGN KEY (customer_id) REFERENCES customers(id)
     );
@@ -263,6 +267,8 @@ if (dbUrl) {
   try { s.exec('ALTER TABLE products ADD COLUMN tipo_banho TEXT'); } catch {}
   try { s.exec('ALTER TABLE products ADD COLUMN detalhes_memo TEXT'); } catch {}
   try { s.exec('ALTER TABLE products ADD COLUMN categoria TEXT'); } catch {}
+  try { s.exec("ALTER TABLE customers ADD COLUMN updated_at TEXT DEFAULT (datetime('now'))"); } catch {}
+  try { s.exec("ALTER TABLE orders ADD COLUMN updated_at TEXT DEFAULT (datetime('now'))"); } catch {}
 
   db = s;
 }

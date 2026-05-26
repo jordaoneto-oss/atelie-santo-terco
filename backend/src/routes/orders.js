@@ -7,22 +7,21 @@ const router = Router();
 router.use(authMiddleware);
 
 router.get('/stats/summary', asyncHandler(async (req, res) => {
-  const userId = req.user.id;
-  const totalOrders = (await db.prepare('SELECT COUNT(*) as count FROM orders WHERE user_id = ?').get(userId)).count;
-  const totalRevenue = (await db.prepare("SELECT COALESCE(SUM(total),0) as sum FROM orders WHERE user_id = ? AND status != 'cancelled'").get(userId)).sum;
-  const totalProducts = (await db.prepare('SELECT COUNT(*) as count FROM products WHERE user_id = ?').get(userId)).count;
-  const totalCustomers = (await db.prepare('SELECT COUNT(*) as count FROM customers WHERE user_id = ?').get(userId)).count;
-  const pendingOrders = (await db.prepare("SELECT COUNT(*) as count FROM orders WHERE user_id = ? AND status = 'pending'").get(userId)).count;
+  const totalOrders = (await db.prepare('SELECT COUNT(*) as count FROM orders').get()).count;
+  const totalRevenue = (await db.prepare("SELECT COALESCE(SUM(total),0) as sum FROM orders WHERE status != 'cancelled'").get()).sum;
+  const totalProducts = (await db.prepare('SELECT COUNT(*) as count FROM products').get()).count;
+  const totalCustomers = (await db.prepare('SELECT COUNT(*) as count FROM customers').get()).count;
+  const pendingOrders = (await db.prepare("SELECT COUNT(*) as count FROM orders WHERE status = 'pending'").get()).count;
   res.json({ totalOrders, totalRevenue, totalProducts, totalCustomers, pendingOrders });
 }));
 
 router.get('/', asyncHandler(async (req, res) => {
   const { status, customer_id } = req.query;
-  let sql = 'SELECT * FROM orders WHERE user_id = ?';
-  const params = [req.user.id];
-  if (status) { sql += ' AND status = ?'; params.push(status); }
-  if (customer_id) { sql += ' AND customer_id = ?'; params.push(customer_id); }
-  sql += ' ORDER BY created_at DESC';
+  let sql = 'SELECT o.*, u.name as created_by_name FROM orders o LEFT JOIN users u ON u.id = o.user_id WHERE 1=1';
+  const params = [];
+  if (status) { sql += ' AND o.status = ?'; params.push(status); }
+  if (customer_id) { sql += ' AND o.customer_id = ?'; params.push(customer_id); }
+  sql += ' ORDER BY o.created_at DESC';
 
   const orders = await db.prepare(sql).all(...params);
   const itemsStmt = db.prepare(`
@@ -41,7 +40,7 @@ router.get('/', asyncHandler(async (req, res) => {
 }));
 
 router.get('/:id', asyncHandler(async (req, res) => {
-  const order = await db.prepare('SELECT * FROM orders WHERE id = ? AND user_id = ?').get(req.params.id, req.user.id);
+  const order = await db.prepare('SELECT o.*, u.name as created_by_name FROM orders o LEFT JOIN users u ON u.id = o.user_id WHERE o.id = ?').get(req.params.id);
   if (!order) return res.status(404).json({ error: 'Pedido não encontrado' });
   order.items = await db.prepare(`
     SELECT oi.*, p.name as product_name, p.image_url FROM order_items oi
@@ -57,7 +56,7 @@ router.post('/', asyncHandler(async (req, res) => {
 
   let total = 0;
   for (const item of items) {
-    const product = await db.prepare('SELECT price FROM products WHERE id = ? AND user_id = ?').get(item.product_id, req.user.id);
+    const product = await db.prepare('SELECT price FROM products WHERE id = ?').get(item.product_id);
     if (!product) return res.status(400).json({ error: `Produto ${item.product_id} não encontrado` });
     total += product.price * (item.quantity || 1);
   }
@@ -71,19 +70,19 @@ router.post('/', asyncHandler(async (req, res) => {
     await insertItem.run(orderResult.lastInsertRowid, item.product_id, item.variant_id || null, item.quantity || 1, product.price);
   }
 
-  const order = await db.prepare('SELECT * FROM orders WHERE id = ?').get(orderResult.lastInsertRowid);
+  const order = await db.prepare('SELECT o.*, u.name as created_by_name FROM orders o LEFT JOIN users u ON u.id = o.user_id WHERE o.id = ?').get(orderResult.lastInsertRowid);
   order.items = await db.prepare('SELECT oi.*, p.name as product_name FROM order_items oi JOIN products p ON p.id = oi.product_id WHERE oi.order_id = ?').all(order.id);
   res.status(201).json(order);
 }));
 
 router.put('/:id/status', asyncHandler(async (req, res) => {
-  const order = await db.prepare('SELECT * FROM orders WHERE id = ? AND user_id = ?').get(req.params.id, req.user.id);
+  const order = await db.prepare('SELECT * FROM orders WHERE id = ?').get(req.params.id);
   if (!order) return res.status(404).json({ error: 'Pedido não encontrado' });
   const { status } = req.body;
   const valid = ['pending', 'confirmed', 'printing', 'shipped', 'delivered', 'cancelled'];
   if (!valid.includes(status)) return res.status(400).json({ error: 'Status inválido' });
-  await db.prepare('UPDATE orders SET status = ? WHERE id = ?').run(status, req.params.id);
-  const updated = await db.prepare('SELECT * FROM orders WHERE id = ?').get(req.params.id);
+  await db.prepare("UPDATE orders SET status = ?, updated_at = datetime('now') WHERE id = ?").run(status, req.params.id);
+  const updated = await db.prepare('SELECT o.*, u.name as created_by_name FROM orders o LEFT JOIN users u ON u.id = o.user_id WHERE o.id = ?').get(req.params.id);
   res.json(updated);
 }));
 

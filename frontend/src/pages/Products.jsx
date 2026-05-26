@@ -56,6 +56,7 @@ export default function Products() {
               <th className="text-left p-4 text-sm font-medium text-brown-700">Preço</th>
               <th className="text-left p-4 text-sm font-medium text-brown-700">Estoque</th>
               <th className="text-left p-4 text-sm font-medium text-brown-700">Status</th>
+              <th className="text-left p-4 text-sm font-medium text-brown-700">Criado por</th>
               <th className="text-right p-4 text-sm font-medium text-brown-700">Ações</th>
             </tr>
           </thead>
@@ -70,13 +71,17 @@ export default function Products() {
                 <td className="p-4 text-sm font-medium text-gold-700">R$ {Number(p.price).toFixed(2)}</td>
                 <td className="p-4 text-sm text-brown-600">{p.stock}</td>
                 <td className="p-4"><span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[p.status] || statusColors.active}`}>{STATUS_LABELS[p.status] || p.status}</span></td>
+                <td className="p-4 text-xs text-brown-500">
+                  <div>{p.created_by_name || '-'}</div>
+                  <div className="text-[10px] text-brown-400">{new Date(p.created_at).toLocaleString('pt-BR')}</div>
+                </td>
                 <td className="p-4 text-right">
                   <Link to={`/produtos/${p.id}`} className="text-gold-600 text-sm hover:underline mr-3">Editar</Link>
                   <button onClick={() => handleDelete(p.id)} className="text-rose-600 text-sm hover:underline">Remover</button>
                 </td>
               </tr>
             ))}
-            {products.length === 0 && <tr><td colSpan={6} className="p-8 text-center text-brown-400">Nenhum produto encontrado</td></tr>}
+            {products.length === 0 && <tr><td colSpan={7} className="p-8 text-center text-brown-400">Nenhum produto encontrado</td></tr>}
           </tbody>
         </table>
       </div>
@@ -92,11 +97,12 @@ export default function Products() {
               </div>
               <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 ${statusColors[p.status] || statusColors.active}`}>{STATUS_LABELS[p.status] || p.status}</span>
             </div>
-            <div className="flex items-center gap-3 text-xs text-brown-600 mb-3">
+            <div className="flex items-center gap-3 text-xs text-brown-600 mb-2">
               <span className="px-2 py-0.5 rounded-full bg-gold-100 text-gold-700 font-medium">{p.categoria || '-'}</span>
               <span className="font-medium text-gold-700">R$ {Number(p.price).toFixed(2)}</span>
               <span>Est: {p.stock}</span>
             </div>
+            <div className="text-[10px] text-brown-400 mb-3">Criado por {p.created_by_name || '-'} em {new Date(p.created_at).toLocaleString('pt-BR')}</div>
             <div className="flex gap-2 pt-2 border-t border-gold-100">
               <Link to={`/produtos/${p.id}`} className="flex-1 text-center text-sm text-gold-600 py-2 rounded-lg border border-gold-200 hover:bg-gold-50">Editar</Link>
               <button onClick={() => handleDelete(p.id)} className="flex-1 text-sm text-rose-600 py-2 rounded-lg border border-rose-200 hover:bg-rose-50">Remover</button>

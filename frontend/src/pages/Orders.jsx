@@ -78,7 +78,7 @@ export default function Orders() {
               <th className="text-left p-4 text-sm font-medium text-brown-700">Itens</th>
               <th className="text-left p-4 text-sm font-medium text-brown-700">Total</th>
               <th className="text-left p-4 text-sm font-medium text-brown-700">Status</th>
-              <th className="text-left p-4 text-sm font-medium text-brown-700">Data</th>
+              <th className="text-left p-4 text-sm font-medium text-brown-700">Criado por</th>
               <th className="text-right p-4 text-sm font-medium text-brown-700">Ações</th>
             </tr>
           </thead>
@@ -94,7 +94,10 @@ export default function Orders() {
                     {Object.keys(STATUS_LABELS).map(s => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
                   </select>
                 </td>
-                <td className="p-4 text-sm text-brown-500">{new Date(o.created_at).toLocaleDateString('pt-BR')}</td>
+                <td className="p-4 text-xs text-brown-500">
+                  <div>{o.created_by_name || '-'}</div>
+                  <div className="text-[10px] text-brown-400">{new Date(o.created_at).toLocaleString('pt-BR')}</div>
+                </td>
                 <td className="p-4 text-right">
                   <button onClick={() => updateStatus(o.id, 'cancelled')} className="text-rose-600 text-sm hover:underline">Cancelar</button>
                 </td>
@@ -113,12 +116,13 @@ export default function Orders() {
               <div className="font-medium text-brown-800 text-sm">Pedido #{o.id}</div>
               <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${statusColors[o.status]}`}>{STATUS_LABELS[o.status]}</span>
             </div>
-            <div className="space-y-1 text-xs text-brown-500 mb-3">
+            <div className="space-y-1 text-xs text-brown-500 mb-2">
               <div>👤 {o.customer?.name || 'Sem cliente'}</div>
               <div>📦 {o.items?.length || 0} item(ns)</div>
               <div className="font-medium text-gold-700">💰 R$ {Number(o.total).toFixed(2)}</div>
               <div>📅 {new Date(o.created_at).toLocaleDateString('pt-BR')}</div>
             </div>
+            <div className="text-[10px] text-brown-400 mb-3">Criado por {o.created_by_name || '-'}</div>
             <div className="flex gap-2 pt-2 border-t border-gold-100">
               <select value={o.status} onChange={e => updateStatus(o.id, e.target.value)} className={`flex-1 text-xs py-2 px-2 rounded-lg border border-gold-200 bg-white ${statusColors[o.status]}`}>
                 {Object.keys(STATUS_LABELS).map(s => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}

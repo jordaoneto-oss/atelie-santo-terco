@@ -8,12 +8,12 @@ router.use(authMiddleware);
 
 router.get('/', asyncHandler(async (req, res) => {
   const { status, search } = req.query;
-  let sql = 'SELECT * FROM products WHERE user_id = ?';
-  const params = [req.user.id];
+  let sql = 'SELECT p.*, u.name as created_by_name FROM products p LEFT JOIN users u ON u.id = p.user_id WHERE 1=1';
+  const params = [];
 
-  if (status) { sql += ' AND status = ?'; params.push(status); }
-  if (search) { sql += ' AND (name LIKE ? OR description LIKE ?)'; params.push(`%${search}%`, `%${search}%`); }
-  sql += ' ORDER BY created_at DESC';
+  if (status) { sql += ' AND p.status = ?'; params.push(status); }
+  if (search) { sql += ' AND (p.name LIKE ? OR p.description LIKE ?)'; params.push(`%${search}%`, `%${search}%`); }
+  sql += ' ORDER BY p.created_at DESC';
 
   const products = await db.prepare(sql).all(...params);
   const stmt = db.prepare('SELECT * FROM product_variants WHERE product_id = ?');
@@ -26,7 +26,7 @@ router.get('/', asyncHandler(async (req, res) => {
 }));
 
 router.get('/:id', asyncHandler(async (req, res) => {
-  const product = await db.prepare('SELECT * FROM products WHERE id = ? AND user_id = ?').get(req.params.id, req.user.id);
+  const product = await db.prepare('SELECT p.*, u.name as created_by_name FROM products p LEFT JOIN users u ON u.id = p.user_id WHERE p.id = ?').get(req.params.id);
   if (!product) return res.status(404).json({ error: 'Produto não encontrado' });
   product.variants = await db.prepare('SELECT * FROM product_variants WHERE product_id = ?').all(product.id);
   res.json(product);
@@ -42,12 +42,12 @@ router.post('/', asyncHandler(async (req, res) => {
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
   `).run(req.user.id, name, description || '', price, cost || 0, dimensions || '', weight || 0, crucifixo || '', entremeio || '', contas || '', resina ? 1 : 0, tipo_banho || '', detalhes_memo || '', categoria || '', stock || 0, status || 'active');
 
-  const product = await db.prepare('SELECT * FROM products WHERE id = ?').get(result.lastInsertRowid);
+  const product = await db.prepare('SELECT p.*, u.name as created_by_name FROM products p LEFT JOIN users u ON u.id = p.user_id WHERE p.id = ?').get(result.lastInsertRowid);
   res.status(201).json(product);
 }));
 
 router.put('/:id', asyncHandler(async (req, res) => {
-  const product = await db.prepare('SELECT * FROM products WHERE id = ? AND user_id = ?').get(req.params.id, req.user.id);
+  const product = await db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
   if (!product) return res.status(404).json({ error: 'Produto não encontrado' });
 
   const { name, description, price, cost, dimensions, weight, crucifixo, entremeio, contas, resina, tipo_banho, detalhes_memo, categoria, stock, status, image_url } = req.body;
@@ -64,18 +64,18 @@ router.put('/:id', asyncHandler(async (req, res) => {
     image_url ?? product.image_url, req.params.id
   );
 
-  const updated = await db.prepare('SELECT * FROM products WHERE id = ?').get(req.params.id);
+  const updated = await db.prepare('SELECT p.*, u.name as created_by_name FROM products p LEFT JOIN users u ON u.id = p.user_id WHERE p.id = ?').get(req.params.id);
   res.json(updated);
 }));
 
 router.delete('/:id', asyncHandler(async (req, res) => {
-  const result = await db.prepare('DELETE FROM products WHERE id = ? AND user_id = ?').run(req.params.id, req.user.id);
+  const result = await db.prepare('DELETE FROM products WHERE id = ?').run(req.params.id);
   if (result.changes === 0) return res.status(404).json({ error: 'Produto não encontrado' });
   res.json({ message: 'Produto removido' });
 }));
 
 router.post('/:id/variants', asyncHandler(async (req, res) => {
-  const product = await db.prepare('SELECT id FROM products WHERE id = ? AND user_id = ?').get(req.params.id, req.user.id);
+  const product = await db.prepare('SELECT id FROM products WHERE id = ?').get(req.params.id);
   if (!product) return res.status(404).json({ error: 'Produto não encontrado' });
   const { name, color, material, price_modifier, stock } = req.body;
   const result = await db.prepare(`

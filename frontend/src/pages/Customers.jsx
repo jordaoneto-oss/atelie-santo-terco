@@ -122,6 +122,7 @@ export default function Customers() {
               <th className="text-left p-4 text-sm font-medium text-brown-700">Telefone</th>
               <th className="text-left p-4 text-sm font-medium text-brown-700">Cidade/UF</th>
               <th className="text-left p-4 text-sm font-medium text-brown-700">Instagram</th>
+              <th className="text-left p-4 text-sm font-medium text-brown-700">Criado por</th>
               <th className="text-right p-4 text-sm font-medium text-brown-700">Ações</th>
             </tr>
           </thead>
@@ -133,13 +134,17 @@ export default function Customers() {
                 <td className="p-4 text-sm text-brown-600">{c.phone || '-'}</td>
                 <td className="p-4 text-sm text-brown-600">{c.address_city ? `${c.address_city}/${c.address_state || ''}` : '-'}</td>
                 <td className="p-4 text-sm text-brown-600">{c.instagram ? <a href={`https://instagram.com/${c.instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="text-rose-600 hover:underline">{c.instagram}</a> : '-'}</td>
+                <td className="p-4 text-xs text-brown-500">
+                  <div>{c.created_by_name || '-'}</div>
+                  <div className="text-[10px] text-brown-400">{new Date(c.created_at).toLocaleString('pt-BR')}</div>
+                </td>
                 <td className="p-4 text-right">
                   <button onClick={() => handleEdit(c)} className="text-gold-600 text-sm hover:underline mr-3">Editar</button>
                   <button onClick={() => handleDelete(c.id)} className="text-rose-600 text-sm hover:underline">Remover</button>
                 </td>
               </tr>
             ))}
-            {customers.length === 0 && <tr><td colSpan={6} className="p-8 text-center text-brown-400">Nenhum cliente encontrado</td></tr>}
+            {customers.length === 0 && <tr><td colSpan={7} className="p-8 text-center text-brown-400">Nenhum cliente encontrado</td></tr>}
           </tbody>
         </table>
       </div>
@@ -149,12 +154,13 @@ export default function Customers() {
         {customers.map(c => (
           <div key={c.id} className="bg-white rounded-xl p-4 shadow-sm border border-gold-200">
             <div className="font-medium text-brown-800 text-sm mb-1">{c.name}</div>
-            <div className="space-y-1 text-xs text-brown-500 mb-3">
+            <div className="space-y-1 text-xs text-brown-500 mb-2">
               {c.email && <div>📧 {c.email}</div>}
               {c.phone && <div>📞 {c.phone}</div>}
               {c.address_city && <div>📍 {c.address_city}/{c.address_state || ''}</div>}
               {c.instagram && <div>📷 <a href={`https://instagram.com/${c.instagram.replace('@', '')}`} target="_blank" rel="noopener noreferrer" className="text-rose-600">{c.instagram}</a></div>}
             </div>
+            <div className="text-[10px] text-brown-400 mb-3">Criado por {c.created_by_name || '-'} em {new Date(c.created_at).toLocaleString('pt-BR')}</div>
             <div className="flex gap-2 pt-2 border-t border-gold-100">
               <button onClick={() => handleEdit(c)} className="flex-1 text-sm text-gold-600 py-2 rounded-lg border border-gold-200 hover:bg-gold-50">Editar</button>
               <button onClick={() => handleDelete(c.id)} className="flex-1 text-sm text-rose-600 py-2 rounded-lg border border-rose-200 hover:bg-rose-50">Remover</button>

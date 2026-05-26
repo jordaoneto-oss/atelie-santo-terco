@@ -7,11 +7,10 @@ const router = Router();
 router.use(authMiddleware);
 
 router.get('/sales', asyncHandler(async (req, res) => {
-  const userId = req.user.id;
   const { customer_id, categoria, data_inicio, data_fim } = req.query;
 
-  let where = 'WHERE o.user_id = ? AND o.status != ?';
-  const params = [userId, 'cancelled'];
+  let where = 'WHERE o.status != ?';
+  const params = ['cancelled'];
 
   if (customer_id) { where += ' AND o.customer_id = ?'; params.push(customer_id); }
   if (data_inicio) { where += ' AND o.created_at >= ?'; params.push(data_inicio); }
