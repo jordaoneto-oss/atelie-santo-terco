@@ -11,6 +11,7 @@ import Orders from './pages/Orders';
 import OrderForm from './pages/OrderForm';
 import Marketplaces from './pages/Marketplaces';
 import Users from './pages/Users';
+import Reports from './pages/Reports';
 import Senha from './pages/Senha';
 import ResetarSenha from './pages/ResetarSenha';
 
@@ -45,6 +46,7 @@ export default function App() {
         <Route path="/pedidos" element={<Orders />} />
         <Route path="/pedidos/novo" element={<OrderForm />} />
         <Route path="/marketplaces" element={<Marketplaces />} />
+        <Route path="/relatorios" element={<Reports />} />
         <Route path="/admin/usuarios" element={<Users />} />
         <Route path="/senha" element={<Senha />} />
       </Route>

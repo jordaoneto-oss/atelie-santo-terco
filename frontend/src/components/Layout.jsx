@@ -7,6 +7,7 @@ const nav = [
   { path: '/clientes', label: 'Clientes', icon: '👥' },
   { path: '/pedidos', label: 'Pedidos', icon: '🛒' },
   { path: '/marketplaces', label: 'Marketplaces', icon: '🔗' },
+  { path: '/relatorios', label: 'Relatórios', icon: '📊' },
 ];
 
 const adminNav = [

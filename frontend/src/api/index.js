@@ -55,6 +55,9 @@ export const api = {
     update: (id, body) => request(`/api/users/${id}`, { method: 'PUT', body: JSON.stringify(body) }),
     delete: (id) => request(`/api/users/${id}`, { method: 'DELETE' }),
   },
+  reports: {
+    sales: (params) => request(`/api/reports/sales?${new URLSearchParams(params || {})}`),
+  },
   marketplaces: {
     list: () => request('/api/marketplaces'),
     save: (body) => request('/api/marketplaces', { method: 'POST', body: JSON.stringify(body) }),
