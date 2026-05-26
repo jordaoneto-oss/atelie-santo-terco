@@ -45,15 +45,9 @@ export default function Layout({ user, onLogout }) {
   return (
     <div className="min-h-screen bg-offwhite flex flex-col lg:flex-row">
       {/* Mobile header */}
-      <div className="lg:hidden bg-catholic-dark text-white flex items-center justify-between px-4 py-3 shadow-lg sticky top-0 z-30">
+      <div className="lg:hidden bg-catholic-dark text-white flex items-center justify-between px-4 py-2 shadow-lg sticky top-0 z-30">
         <button onClick={() => setMenuOpen(true)} className="text-2xl leading-none">☰</button>
-        <div className="text-center">
-          <div className="flex items-center gap-2">
-            <img src="/logo.jpg" alt="" className="w-6 h-6 rounded-full object-cover border border-gold-300" />
-            <div className="text-sm font-bold font-serif">Ateliê Santo Terço</div>
-          </div>
-          <div className="text-[10px] text-gold-300">{user?.name?.split(' ')[0]}</div>
-        </div>
+        <img src="/logo.jpg" alt="Ateliê Santo Terço" className="w-9 h-9 rounded-full object-cover border-2 border-gold-300" />
         <div className="w-7" />
       </div>
 
