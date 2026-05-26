@@ -48,7 +48,10 @@ export default function Layout({ user, onLogout }) {
       <div className="lg:hidden bg-catholic-dark text-white flex items-center justify-between px-4 py-3 shadow-lg sticky top-0 z-30">
         <button onClick={() => setMenuOpen(true)} className="text-2xl leading-none">☰</button>
         <div className="text-center">
-          <div className="text-sm font-bold font-serif">🙏 Ateliê</div>
+          <div className="flex items-center gap-2">
+            <img src="/logo.jpg" alt="" className="w-6 h-6 rounded-full object-cover border border-gold-300" />
+            <div className="text-sm font-bold font-serif">Ateliê</div>
+          </div>
           <div className="text-[10px] text-gold-300">{user?.name?.split(' ')[0]}</div>
         </div>
         <div className="w-7" />
@@ -60,9 +63,12 @@ export default function Layout({ user, onLogout }) {
           <div className="absolute inset-0 bg-black/50" onClick={() => setMenuOpen(false)} />
           <aside className="relative w-64 bg-catholic-dark text-white flex flex-col shadow-xl h-full overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b border-gold-700/30">
-              <div>
-                <div className="text-lg font-bold font-serif">🙏 Ateliê</div>
-                <div className="text-xs text-gold-300 mt-1">{user?.name} {user?.role === 'admin' ? '(Admin)' : ''}</div>
+              <div className="flex items-center gap-3">
+                <img src="/logo.jpg" alt="" className="w-10 h-10 rounded-full object-cover border-2 border-gold-300" />
+                <div>
+                  <div className="text-lg font-bold font-serif">Ateliê</div>
+                  <div className="text-xs text-gold-300">{user?.name} {user?.role === 'admin' ? '(Admin)' : ''}</div>
+                </div>
               </div>
               <button onClick={() => setMenuOpen(false)} className="text-2xl leading-none text-gold-300">✕</button>
             </div>
@@ -82,8 +88,13 @@ export default function Layout({ user, onLogout }) {
       {/* Desktop sidebar */}
       <aside className="hidden lg:flex w-60 bg-catholic-dark text-white flex-col shadow-lg shrink-0">
         <div className="p-5 border-b border-gold-700/30">
-          <div className="text-lg font-bold font-serif">🙏 Ateliê</div>
-          <div className="text-xs text-gold-300 mt-1">{user?.name} {user?.role === 'admin' ? '(Admin)' : ''}</div>
+          <div className="flex items-center gap-3">
+            <img src="/logo.jpg" alt="" className="w-10 h-10 rounded-full object-cover border-2 border-gold-300" />
+            <div>
+              <div className="text-lg font-bold font-serif">Ateliê</div>
+              <div className="text-xs text-gold-300 mt-1">{user?.name} {user?.role === 'admin' ? '(Admin)' : ''}</div>
+            </div>
+          </div>
         </div>
         <nav className="flex-1 p-3"><NavLinks /></nav>
         <div className="p-4 border-t border-gold-700/30 space-y-2">

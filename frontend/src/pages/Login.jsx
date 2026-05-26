@@ -45,7 +45,7 @@ export default function Login({ onLogin }) {
       <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(255,255,255,0.3) 1px, transparent 1px)', backgroundSize: '30px 30px' }} />
       <div className="bg-white/95 backdrop-blur-lg rounded-2xl p-8 w-full max-w-md border border-gold-300 shadow-2xl relative">
         <div className="text-center mb-8">
-          <div className="text-5xl mb-3">🙏</div>
+          <img src="/logo.jpg" alt="Ateliê Santo Terço" className="w-20 h-20 rounded-full mx-auto mb-3 object-cover border-2 border-gold-300 shadow-lg" />
           <h1 className="text-2xl font-bold" style={{ color: '#6b3a2a' }}>Ateliê Santo Terço</h1>
           <p className="text-gold-600 text-sm mt-1 font-medium">Gestão de Produtos e Vendas</p>
         </div>

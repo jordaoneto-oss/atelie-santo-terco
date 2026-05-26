@@ -20,8 +20,8 @@ export default function Instagram() {
       {/* Profile card */}
       <div className="bg-white rounded-xl p-6 shadow-md border border-gold-200 mb-6">
         <div className="flex flex-col sm:flex-row items-center gap-4 sm:gap-6">
-          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-gradient-to-br from-rose-400 via-gold-500 to-brown-500 flex items-center justify-center text-white text-3xl sm:text-4xl font-bold shrink-0 shadow-lg">
-            A
+          <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden shrink-0 shadow-lg border-2 border-gold-300">
+            <img src="/logo.jpg" alt="Ateliê Santo Terço" className="w-full h-full object-cover" />
           </div>
           <div className="text-center sm:text-left flex-1 min-w-0">
             <h2 className="text-xl font-bold text-brown-800 font-serif">{INSTAGRAM_USER}</h2>
