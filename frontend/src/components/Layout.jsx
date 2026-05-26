@@ -50,7 +50,7 @@ export default function Layout({ user, onLogout }) {
         <div className="text-center">
           <div className="flex items-center gap-2">
             <img src="/logo.jpg" alt="" className="w-6 h-6 rounded-full object-cover border border-gold-300" />
-            <div className="text-sm font-bold font-serif">Ateliê</div>
+            <div className="text-sm font-bold font-serif">Ateliê Santo Terço</div>
           </div>
           <div className="text-[10px] text-gold-300">{user?.name?.split(' ')[0]}</div>
         </div>
@@ -66,7 +66,7 @@ export default function Layout({ user, onLogout }) {
               <div className="flex items-center gap-3">
                 <img src="/logo.jpg" alt="" className="w-10 h-10 rounded-full object-cover border-2 border-gold-300" />
                 <div>
-                  <div className="text-lg font-bold font-serif">Ateliê</div>
+                  <div className="text-lg font-bold font-serif">Ateliê Santo Terço</div>
                   <div className="text-xs text-gold-300">{user?.name} {user?.role === 'admin' ? '(Admin)' : ''}</div>
                 </div>
               </div>
@@ -91,7 +91,7 @@ export default function Layout({ user, onLogout }) {
           <div className="flex items-center gap-3">
             <img src="/logo.jpg" alt="" className="w-10 h-10 rounded-full object-cover border-2 border-gold-300" />
             <div>
-              <div className="text-lg font-bold font-serif">Ateliê</div>
+              <div className="text-lg font-bold font-serif">Ateliê Santo Terço</div>
               <div className="text-xs text-gold-300 mt-1">{user?.name} {user?.role === 'admin' ? '(Admin)' : ''}</div>
             </div>
           </div>
