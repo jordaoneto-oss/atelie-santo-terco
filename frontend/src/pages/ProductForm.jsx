@@ -121,12 +121,15 @@ export default function ProductForm() {
                 <option value="Níquel">Níquel</option>
               </select>
             </div>
-            <div className="flex items-center gap-3 mt-6">
-              <label className="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" className="sr-only peer" checked={form.resina} onChange={setCheck('resina')} />
-                <div className="w-11 h-6 bg-gold-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gold-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gold-600" />
-              </label>
-              <span className="text-sm font-medium text-brown-700">Resina</span>
+            <div>
+              <label className="text-sm font-medium text-brown-700 block mb-1">Resina</label>
+              <div className="flex items-center gap-3 mt-1">
+                <label className="relative inline-flex items-center cursor-pointer">
+                  <input type="checkbox" className="sr-only peer" checked={form.resina} onChange={setCheck('resina')} />
+                  <div className="w-11 h-6 bg-gold-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gold-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gold-600" />
+                </label>
+                <span className="text-sm text-brown-700">{form.resina ? 'Sim' : 'Não'}</span>
+              </div>
             </div>
             <div className="col-span-2">
               <label className="text-sm font-medium text-brown-700">Detalhes "Memo"</label>

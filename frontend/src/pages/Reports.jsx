@@ -6,19 +6,29 @@ export default function Reports() {
   const [categories, setCategories] = useState([]);
   const [filters, setFilters] = useState({ customer_id: '', categoria: '', data_inicio: '', data_fim: '' });
   const [data, setData] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
   useEffect(() => {
-    api.customers.list().then(setCustomers);
-    api.products.list().then(products => {
-      const cats = [...new Set(products.map(p => p.categoria).filter(Boolean))];
+    Promise.all([
+      api.customers.list(),
+      api.products.list(),
+    ]).then(([customersData, productsData]) => {
+      setCustomers(customersData);
+      const cats = [...new Set(productsData.map(p => p.categoria).filter(Boolean))];
       setCategories(cats);
-    });
+    }).catch(() => {});
   }, []);
 
   useEffect(() => {
     setLoading(true);
-    api.reports.sales(filters).then(setData).catch(() => {}).finally(() => setLoading(false));
+    setError('');
+    const params = {};
+    if (filters.customer_id) params.customer_id = filters.customer_id;
+    if (filters.categoria) params.categoria = filters.categoria;
+    if (filters.data_inicio) params.data_inicio = filters.data_inicio;
+    if (filters.data_fim) params.data_fim = filters.data_fim;
+    api.reports.sales(params).then(setData).catch(err => setError(err.message)).finally(() => setLoading(false));
   }, [filters]);
 
   function setFilter(key) {
@@ -59,10 +69,12 @@ export default function Reports() {
         </div>
       </div>
 
+      {error && <div className="bg-red-100 text-red-700 p-3 rounded-lg mb-4 border border-red-200 text-sm">{error}</div>}
+
       {/* Loading */}
       {loading && <p className="text-center text-brown-400 py-8">Carregando...</p>}
 
-      {!loading && data && (
+      {!loading && !error && data && (
         <>
           {/* Summary cards */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
