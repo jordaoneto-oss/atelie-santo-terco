@@ -95,6 +95,24 @@ export default function Customers() {
 
           <div className="text-sm font-medium text-brown-600 mb-2">Endereço</div>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-4 sm:mb-6">
+            <div>
+              <div className="flex items-center gap-2">
+                <input className="flex-1 p-3 rounded-lg border border-gold-200 bg-offwhite text-sm" placeholder="CEP" value={form.address_zipcode} onChange={async e => {
+                  const v = e.target.value.replace(/\D/g, '').slice(0, 8);
+                  setForm(p => ({ ...p, address_zipcode: v }));
+                  if (v.length === 8) {
+                    try {
+                      const res = await fetch(`https://viacep.com.br/ws/${v}/json/`);
+                      const d = await res.json();
+                      if (!d.erro) {
+                        setForm(p => ({ ...p, address_street: d.logradouro || p.address_street, address_neighborhood: d.bairro || p.address_neighborhood, address_city: d.localidade || p.address_city, address_state: d.uf || p.address_state }));
+                      }
+                    } catch {}
+                  }
+                }} />
+                {form.address_zipcode.length === 8 && <div className="w-4 h-4 rounded-full border-2 border-gold-400 border-t-transparent animate-spin" />}
+              </div>
+            </div>
             <div className="sm:col-span-2">
               <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite text-sm" placeholder="Rua / Avenida" value={form.address_street} onChange={setField('address_street')} />
             </div>
@@ -105,7 +123,6 @@ export default function Customers() {
               <option value="">UF</option>
               {UF_LIST.map(uf => <option key={uf} value={uf}>{uf}</option>)}
             </select>
-            <input className="p-3 rounded-lg border border-gold-200 bg-offwhite text-sm" placeholder="CEP" value={form.address_zipcode} onChange={setField('address_zipcode')} />
           </div>
 
           <textarea className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite text-sm" placeholder="Observações" rows={2} value={form.notes} onChange={setField('notes')} />
