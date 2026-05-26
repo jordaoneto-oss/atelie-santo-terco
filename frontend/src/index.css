@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background-color: #f5f0e8;
+}
+
+.bg-catholic {
+  background: linear-gradient(135deg, #6b3a2a 0%, #8a4f34 30%, #c9992c 70%, #d4877a 100%);
+}
+
+.bg-catholic-dark {
+  background: linear-gradient(180deg, #4a2518 0%, #6b3a2a 100%);
+}
+
+.text-shadow {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
