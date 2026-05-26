@@ -1,0 +1,21 @@
+
+  VITE v5.4.21  ready in 406 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: http://192.168.0.138:5173/
+9:54:57 PM [vite] hmr update /src/index.css, /src/App.jsx, /src/pages/Login.jsx, /src/pages/Dashboard.jsx, /src/pages/Products.jsx, /src/pages/Customers.jsx, /src/pages/ProductForm.jsx, /src/pages/Orders.jsx, /src/pages/Marketplaces.jsx, /src/pages/OrderForm.jsx, /src/pages/Users.jsx, /src/pages/Senha.jsx
+9:55:13 PM [vite] hmr update /src/pages/Login.jsx, /src/index.css
+9:55:49 PM [vite] hmr update /src/App.jsx, /src/index.css
+9:55:56 PM [vite] hmr update /src/App.jsx, /src/index.css
+9:58:48 PM [vite] http proxy error: /api/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1193:18)
+    at afterConnectMultiple (node:net:1783:7)
+9:59:00 PM [vite] http proxy error: /api/auth/forgot-password
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1193:18)
+    at afterConnectMultiple (node:net:1783:7)
+9:59:02 PM [vite] http proxy error: /api/auth/login
+AggregateError [ECONNREFUSED]: 
+    at internalConnectMultiple (node:net:1193:18)
+    at afterConnectMultiple (node:net:1783:7)
