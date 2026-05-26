@@ -4,14 +4,20 @@ import { fileURLToPath } from 'url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 let db;
+let dbError;
 
-const dbUrl = (process.env.DATABASE_URL || process.env.POSTGRES_URL || Object.entries(process.env).find(([k]) => k.endsWith('_POSTGRES_URL'))?.[1] || '').replace(/sslmode=[^&]*&?/, '');
+function getDbUrl() {
+  return (process.env.DATABASE_URL || process.env.POSTGRES_URL || Object.entries(process.env).find(([k]) => k.endsWith('_POSTGRES_URL'))?.[1] || '').replace(/sslmode=[^&]*&?/, '');
+}
+
+const dbUrl = getDbUrl();
 if (dbUrl) {
-  const pg = await import('pg');
-  const pool = new pg.default.Pool({
-    connectionString: dbUrl,
-    ssl: { rejectUnauthorized: false },
-  });
+  try {
+    const pg = await import('pg');
+    const pool = new pg.default.Pool({
+      connectionString: dbUrl,
+      ssl: { rejectUnauthorized: false },
+    });
 
   const prepare = (sql) => {
     let i = 0;
@@ -134,9 +140,21 @@ if (dbUrl) {
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
   `;
-  await pool.query(schema);
+    await pool.query(schema);
 
-  db = { prepare, exec };
+    db = { prepare, exec };
+  } catch (e) {
+    console.error('[DB] Erro ao conectar no PostgreSQL:', e.message);
+    dbError = e.message;
+    db = {
+      prepare: () => ({
+        get: async () => { throw new Error('Database offline: ' + dbError); },
+        all: async () => { throw new Error('Database offline: ' + dbError); },
+        run: async () => { throw new Error('Database offline: ' + dbError); },
+      }),
+      exec: async () => { throw new Error('Database offline: ' + dbError); },
+    };
+  }
 } else {
   const Database = (await import('better-sqlite3')).default;
   const { mkdirSync, existsSync } = await import('fs');
