@@ -53,38 +53,38 @@ export default function ProductForm() {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="bg-white rounded-xl p-6 shadow-md border border-gold-200">
           <h2 className="font-medium text-brown-700 mb-4 font-serif">Informações Básicas</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
             <div className="sm:col-span-2">
-              <label className="text-sm font-medium text-brown-700">Nome *</label>
-              <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite mt-1" value={form.name} onChange={set('name')} required />
+              <label className="text-sm font-medium text-brown-700 block mb-1.5">Nome *</label>
+              <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite" value={form.name} onChange={set('name')} required />
             </div>
             <div className="sm:col-span-2">
-              <label className="text-sm font-medium text-brown-700">Descrição</label>
-              <textarea className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite mt-1" rows={3} value={form.description} onChange={set('description')} />
+              <label className="text-sm font-medium text-brown-700 block mb-1.5">Descrição</label>
+              <textarea className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite" rows={3} value={form.description} onChange={set('description')} />
             </div>
             <div>
-              <label className="text-sm font-medium text-brown-700">Preço (R$) *</label>
-              <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite mt-1" type="number" step="0.01" value={form.price} onChange={set('price')} required />
+              <label className="text-sm font-medium text-brown-700 block mb-1.5">Preço (R$) *</label>
+              <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite" type="number" step="0.01" value={form.price} onChange={set('price')} required />
             </div>
             <div>
-              <label className="text-sm font-medium text-brown-700">Custo (R$)</label>
-              <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite mt-1" type="number" step="0.01" value={form.cost} onChange={set('cost')} />
+              <label className="text-sm font-medium text-brown-700 block mb-1.5">Custo (R$)</label>
+              <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite" type="number" step="0.01" value={form.cost} onChange={set('cost')} />
             </div>
             <div>
-              <label className="text-sm font-medium text-brown-700">Dimensões</label>
-              <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite mt-1" value={form.dimensions} onChange={set('dimensions')} placeholder="10x10x15cm" />
+              <label className="text-sm font-medium text-brown-700 block mb-1.5">Dimensões</label>
+              <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite" value={form.dimensions} onChange={set('dimensions')} placeholder="10x10x15cm" />
             </div>
             <div>
-              <label className="text-sm font-medium text-brown-700">Peso (g)</label>
-              <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite mt-1" type="number" value={form.weight} onChange={set('weight')} />
+              <label className="text-sm font-medium text-brown-700 block mb-1.5">Peso (g)</label>
+              <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite" type="number" value={form.weight} onChange={set('weight')} />
             </div>
             <div>
-              <label className="text-sm font-medium text-brown-700">Estoque</label>
-              <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite mt-1" type="number" value={form.stock} onChange={set('stock')} />
+              <label className="text-sm font-medium text-brown-700 block mb-1.5">Estoque</label>
+              <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite" type="number" value={form.stock} onChange={set('stock')} />
             </div>
             <div>
-              <label className="text-sm font-medium text-brown-700">Categoria</label>
-              <select className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite mt-1 text-brown-600" value={form.categoria} onChange={set('categoria')}>
+              <label className="text-sm font-medium text-brown-700 block mb-1.5">Categoria</label>
+              <select className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite text-brown-600" value={form.categoria} onChange={set('categoria')}>
                 <option value="">Selecione...</option>
                 <option value="Dia a Dia">Dia a Dia</option>
                 <option value="Premium">Premium</option>
@@ -99,22 +99,22 @@ export default function ProductForm() {
 
         <div className="bg-white rounded-xl p-6 shadow-md border border-gold-200">
           <h2 className="font-medium text-brown-700 mb-4 font-serif">Materiais</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-5">
             <div>
-              <label className="text-sm font-medium text-brown-700">Crucifixo</label>
-              <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite mt-1" value={form.crucifixo} onChange={set('crucifixo')} placeholder="Ex: Cruz de São Bento" />
+              <label className="text-sm font-medium text-brown-700 block mb-1.5">Crucifixo</label>
+              <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite" value={form.crucifixo} onChange={set('crucifixo')} placeholder="Ex: Cruz de São Bento" />
             </div>
             <div>
-              <label className="text-sm font-medium text-brown-700">Entremeio</label>
-              <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite mt-1" value={form.entremeio} onChange={set('entremeio')} placeholder="Ex: Medalha Aparecida" />
+              <label className="text-sm font-medium text-brown-700 block mb-1.5">Entremeio</label>
+              <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite" value={form.entremeio} onChange={set('entremeio')} placeholder="Ex: Medalha Aparecida" />
             </div>
             <div>
-              <label className="text-sm font-medium text-brown-700">Contas</label>
-              <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite mt-1" value={form.contas} onChange={set('contas')} placeholder="Ex: Azul e Branco" />
+              <label className="text-sm font-medium text-brown-700 block mb-1.5">Contas</label>
+              <input className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite" value={form.contas} onChange={set('contas')} placeholder="Ex: Azul e Branco" />
             </div>
             <div>
-              <label className="text-sm font-medium text-brown-700">Tipo de Banho</label>
-              <select className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite mt-1 text-brown-600" value={form.tipo_banho} onChange={set('tipo_banho')}>
+              <label className="text-sm font-medium text-brown-700 block mb-1.5">Tipo de Banho</label>
+              <select className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite text-brown-600" value={form.tipo_banho} onChange={set('tipo_banho')}>
                 <option value="">Selecione...</option>
                 <option value="Dourado">Dourado</option>
                 <option value="Ouro Velho">Ouro Velho</option>
@@ -122,8 +122,8 @@ export default function ProductForm() {
               </select>
             </div>
             <div>
-              <label className="text-sm font-medium text-brown-700 block mb-1">Resina</label>
-              <div className="flex items-center gap-3 mt-1">
+              <label className="text-sm font-medium text-brown-700 block mb-1.5">Resina</label>
+              <div className="flex items-center gap-3">
                 <label className="relative inline-flex items-center cursor-pointer">
                   <input type="checkbox" className="sr-only peer" checked={form.resina} onChange={setCheck('resina')} />
                   <div className="w-11 h-6 bg-gold-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gold-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gold-600 relative" />
@@ -131,9 +131,9 @@ export default function ProductForm() {
                 <span className="text-sm text-brown-700">{form.resina ? 'Sim' : 'Não'}</span>
               </div>
             </div>
-            <div className="col-span-2">
-              <label className="text-sm font-medium text-brown-700">Detalhes "Memo"</label>
-              <textarea className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite mt-1" rows={2} value={form.detalhes_memo} onChange={set('detalhes_memo')} placeholder="Observações sobre memo personalizado..." />
+            <div className="sm:col-span-2">
+              <label className="text-sm font-medium text-brown-700 block mb-1.5">Detalhes "Memo"</label>
+              <textarea className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite" rows={2} value={form.detalhes_memo} onChange={set('detalhes_memo')} placeholder="Observações sobre memo personalizado..." />
             </div>
           </div>
         </div>
