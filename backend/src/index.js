@@ -31,16 +31,6 @@ app.use('/api/marketplaces', marketplaceRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
-app.post('/api/__migrate', async (req, res) => {
-  try {
-    const { runSeed } = await import('./seed.js');
-    await runSeed();
-    res.json({ message: 'Migração executada' });
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-});
-
 app.use((err, req, res, next) => {
   console.error(err);
   res.status(500).json({ error: 'Erro interno do servidor' });
