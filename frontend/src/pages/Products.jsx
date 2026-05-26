@@ -2,6 +2,12 @@ import { useState, useEffect } from 'react';
 import { api } from '../api';
 import { Link } from 'react-router-dom';
 
+const STATUS_LABELS = {
+  active: 'Ativo',
+  inactive: 'Inativo',
+  archived: 'Arquivado',
+};
+
 const statusColors = {
   active: 'bg-brown-100 text-brown-700',
   inactive: 'bg-gold-100 text-gold-600',
@@ -11,8 +17,14 @@ const statusColors = {
 export default function Products() {
   const [products, setProducts] = useState([]);
   const [search, setSearch] = useState('');
+  const [statusFilter, setStatusFilter] = useState('');
 
-  useEffect(() => { api.products.list({ search }).then(setProducts); }, [search]);
+  useEffect(() => {
+    const params = {};
+    if (search) params.search = search;
+    if (statusFilter) params.status = statusFilter;
+    api.products.list(params).then(setProducts);
+  }, [search, statusFilter]);
 
   async function handleDelete(id) {
     if (!confirm('Remover este produto?')) return;
@@ -26,7 +38,13 @@ export default function Products() {
         <h1 className="text-xl sm:text-2xl font-bold text-brown-800 font-serif">Produtos</h1>
         <Link to="/produtos/novo" className="bg-gold-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-gold-700 shrink-0">+ Novo Produto</Link>
       </div>
-      <input className="w-full p-3 rounded-lg border border-gold-200 bg-white mb-4 placeholder:text-brown-300" placeholder="Buscar produtos..." value={search} onChange={e => setSearch(e.target.value)} />
+      <div className="flex flex-wrap gap-2 mb-4">
+        <input className="flex-1 min-w-[200px] p-3 rounded-lg border border-gold-200 bg-white placeholder:text-brown-300 text-sm" placeholder="Buscar produtos..." value={search} onChange={e => setSearch(e.target.value)} />
+        <select className="p-3 rounded-lg border border-gold-200 bg-white text-sm" value={statusFilter} onChange={e => setStatusFilter(e.target.value)}>
+          <option value="">Todos os status</option>
+          {Object.entries(STATUS_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+        </select>
+      </div>
 
       {/* Desktop table */}
       <div className="hidden md:block bg-white rounded-xl shadow-md overflow-hidden border border-gold-200">
@@ -49,9 +67,9 @@ export default function Products() {
                   <div className="text-xs text-brown-400">{p.description?.slice(0, 60)}{p.description?.length > 60 ? '...' : ''}</div>
                 </td>
                 <td className="p-4 text-sm"><span className="px-2 py-1 rounded-full text-xs font-medium bg-gold-100 text-gold-700">{p.categoria || '-'}</span></td>
-                <td className="p-4 text-sm font-medium text-gold-700">R$ {p.price.toFixed(2)}</td>
+                <td className="p-4 text-sm font-medium text-gold-700">R$ {Number(p.price).toFixed(2)}</td>
                 <td className="p-4 text-sm text-brown-600">{p.stock}</td>
-                <td className="p-4"><span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[p.status] || statusColors.active}`}>{p.status}</span></td>
+                <td className="p-4"><span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[p.status] || statusColors.active}`}>{STATUS_LABELS[p.status] || p.status}</span></td>
                 <td className="p-4 text-right">
                   <Link to={`/produtos/${p.id}`} className="text-gold-600 text-sm hover:underline mr-3">Editar</Link>
                   <button onClick={() => handleDelete(p.id)} className="text-rose-600 text-sm hover:underline">Remover</button>
@@ -72,11 +90,11 @@ export default function Products() {
                 <div className="font-medium text-brown-800 text-sm truncate">{p.name}</div>
                 <div className="text-xs text-brown-400 mt-0.5 line-clamp-2">{p.description || 'Sem descrição'}</div>
               </div>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 ${statusColors[p.status] || statusColors.active}`}>{p.status}</span>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium shrink-0 ${statusColors[p.status] || statusColors.active}`}>{STATUS_LABELS[p.status] || p.status}</span>
             </div>
             <div className="flex items-center gap-3 text-xs text-brown-600 mb-3">
               <span className="px-2 py-0.5 rounded-full bg-gold-100 text-gold-700 font-medium">{p.categoria || '-'}</span>
-              <span className="font-medium text-gold-700">R$ {p.price.toFixed(2)}</span>
+              <span className="font-medium text-gold-700">R$ {Number(p.price).toFixed(2)}</span>
               <span>Est: {p.stock}</span>
             </div>
             <div className="flex gap-2 pt-2 border-t border-gold-100">

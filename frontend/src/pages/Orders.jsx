@@ -2,6 +2,15 @@ import { useState, useEffect } from 'react';
 import { api } from '../api';
 import { Link } from 'react-router-dom';
 
+const STATUS_LABELS = {
+  pending: 'Pendente',
+  confirmed: 'Confirmado',
+  printing: 'Impressão',
+  shipped: 'Enviado',
+  delivered: 'Entregue',
+  cancelled: 'Cancelado',
+};
+
 const statusColors = {
   pending: 'bg-gold-100 text-gold-700',
   confirmed: 'bg-brown-100 text-brown-700',
@@ -13,9 +22,24 @@ const statusColors = {
 
 export default function Orders() {
   const [orders, setOrders] = useState([]);
+  const [customers, setCustomers] = useState([]);
   const [filter, setFilter] = useState('');
+  const [customerFilter, setCustomerFilter] = useState('');
+  const [dateFilter, setDateFilter] = useState('');
 
-  useEffect(() => { api.orders.list({ status: filter || undefined }).then(setOrders); }, [filter]);
+  useEffect(() => { api.customers.list().then(setCustomers).catch(() => {}); }, []);
+
+  useEffect(() => {
+    const params = {};
+    if (filter) params.status = filter;
+    if (customerFilter) params.customer_id = customerFilter;
+    if (dateFilter) {
+      const d = new Date(dateFilter);
+      params.data_inicio = d.toISOString().slice(0, 10);
+      params.data_fim = d.toISOString().slice(0, 10);
+    }
+    api.orders.list(params).then(setOrders);
+  }, [filter, customerFilter, dateFilter]);
 
   async function updateStatus(id, status) {
     await api.orders.updateStatus(id, status);
@@ -29,12 +53,19 @@ export default function Orders() {
         <Link to="/pedidos/novo" className="bg-gold-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-gold-700 shrink-0">+ Novo Pedido</Link>
       </div>
 
-      <div className="flex gap-2 mb-4 overflow-x-auto pb-1 -mx-3 px-3 sm:mx-0 sm:px-0">
-        {['', 'pending', 'confirmed', 'printing', 'shipped', 'delivered', 'cancelled'].map(s => (
-          <button key={s} onClick={() => setFilter(s)} className={`shrink-0 px-3 py-1.5 rounded-lg text-xs sm:text-sm ${filter === s ? 'bg-brown-700 text-white' : 'bg-white border border-gold-200 hover:bg-gold-50 text-brown-600'}`}>
-            {s ? (s.charAt(0).toUpperCase() + s.slice(1)) : 'Todos'}
-          </button>
-        ))}
+      <div className="flex flex-wrap gap-2 mb-4">
+        <select className="p-2.5 rounded-lg border border-gold-200 bg-white text-sm" value={customerFilter} onChange={e => setCustomerFilter(e.target.value)}>
+          <option value="">Todos os clientes</option>
+          {customers.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}
+        </select>
+        <input className="p-2.5 rounded-lg border border-gold-200 bg-white text-sm" type="date" value={dateFilter} onChange={e => setDateFilter(e.target.value)} />
+        <div className="flex gap-1 overflow-x-auto pb-1">
+          {['', 'pending', 'confirmed', 'printing', 'shipped', 'delivered', 'cancelled'].map(s => (
+            <button key={s} onClick={() => setFilter(s)} className={`shrink-0 px-3 py-1.5 rounded-lg text-xs sm:text-sm ${filter === s ? 'bg-brown-700 text-white' : 'bg-white border border-gold-200 hover:bg-gold-50 text-brown-600'}`}>
+              {s ? STATUS_LABELS[s] : 'Todos'}
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Desktop table */}
@@ -57,10 +88,10 @@ export default function Orders() {
                 <td className="p-4 font-medium text-brown-800">#{o.id}</td>
                 <td className="p-4 text-sm text-brown-600">{o.customer?.name || '-'}</td>
                 <td className="p-4 text-sm text-brown-600">{o.items?.length || 0} item(ns)</td>
-                <td className="p-4 text-sm font-medium text-gold-700">R$ {o.total.toFixed(2)}</td>
+                <td className="p-4 text-sm font-medium text-gold-700">R$ {Number(o.total).toFixed(2)}</td>
                 <td className="p-4">
                   <select value={o.status} onChange={e => updateStatus(o.id, e.target.value)} className={`px-2 py-1 rounded-full text-xs font-medium border-0 ${statusColors[o.status]}`}>
-                    {Object.keys(statusColors).map(s => <option key={s} value={s}>{s}</option>)}
+                    {Object.keys(STATUS_LABELS).map(s => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
                   </select>
                 </td>
                 <td className="p-4 text-sm text-brown-500">{new Date(o.created_at).toLocaleDateString('pt-BR')}</td>
@@ -80,17 +111,17 @@ export default function Orders() {
           <div key={o.id} className="bg-white rounded-xl p-4 shadow-sm border border-gold-200">
             <div className="flex justify-between items-start mb-2">
               <div className="font-medium text-brown-800 text-sm">Pedido #{o.id}</div>
-              <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${statusColors[o.status]}`}>{o.status}</span>
+              <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${statusColors[o.status]}`}>{STATUS_LABELS[o.status]}</span>
             </div>
             <div className="space-y-1 text-xs text-brown-500 mb-3">
               <div>👤 {o.customer?.name || 'Sem cliente'}</div>
               <div>📦 {o.items?.length || 0} item(ns)</div>
-              <div className="font-medium text-gold-700">💰 R$ {o.total.toFixed(2)}</div>
+              <div className="font-medium text-gold-700">💰 R$ {Number(o.total).toFixed(2)}</div>
               <div>📅 {new Date(o.created_at).toLocaleDateString('pt-BR')}</div>
             </div>
             <div className="flex gap-2 pt-2 border-t border-gold-100">
-              <select value={o.status} onChange={e => updateStatus(o.id, e.target.value)} className={`flex-1 text-xs py-2 px-2 rounded-lg border border-gold-200 bg-white ${statusColors[o.status].split(' ')[0]} ${statusColors[o.status].split(' ')[1]}`}>
-                {Object.keys(statusColors).map(s => <option key={s} value={s}>{s}</option>)}
+              <select value={o.status} onChange={e => updateStatus(o.id, e.target.value)} className={`flex-1 text-xs py-2 px-2 rounded-lg border border-gold-200 bg-white ${statusColors[o.status]}`}>
+                {Object.keys(STATUS_LABELS).map(s => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
               </select>
               <button onClick={() => updateStatus(o.id, 'cancelled')} className="text-xs text-rose-600 py-2 px-3 rounded-lg border border-rose-200 hover:bg-rose-50 shrink-0">Cancelar</button>
             </div>

@@ -21,7 +21,11 @@ export default function Customers() {
   const blankForm = { name: '', email: '', phone: '', address_street: '', address_number: '', address_neighborhood: '', address_city: '', address_state: '', address_zipcode: '', instagram: '', notes: '' };
   const [form, setForm] = useState({ ...blankForm });
 
-  useEffect(() => { api.customers.list({ search }).then(setCustomers); }, [search]);
+  useEffect(() => {
+    const params = {};
+    if (search) params.search = search;
+    api.customers.list(params).then(setCustomers);
+  }, [search]);
 
   function resetForm() { setForm({ ...blankForm }); setEditing(null); }
 
@@ -70,7 +74,7 @@ export default function Customers() {
         <h1 className="text-xl sm:text-2xl font-bold text-brown-800 font-serif">Clientes</h1>
         <button onClick={() => { resetForm(); setShowForm(true); }} className="bg-gold-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-gold-700 shrink-0">+ Novo Cliente</button>
       </div>
-      <input className="w-full p-3 rounded-lg border border-gold-200 bg-white mb-4 placeholder:text-brown-300" placeholder="Buscar clientes..." value={search} onChange={e => setSearch(e.target.value)} />
+      <input className="w-full p-3 rounded-lg border border-gold-200 bg-white mb-4 placeholder:text-brown-300 text-sm" placeholder="Buscar clientes..." value={search} onChange={e => setSearch(e.target.value)} />
 
       {showForm && (
         <form onSubmit={handleSubmit} className="bg-white rounded-xl p-4 sm:p-6 shadow-md mb-6 border border-gold-200">

@@ -9,7 +9,7 @@ import ProductForm from './pages/ProductForm';
 import Customers from './pages/Customers';
 import Orders from './pages/Orders';
 import OrderForm from './pages/OrderForm';
-import Marketplaces from './pages/Marketplaces';
+import Instagram from './pages/Instagram';
 import Users from './pages/Users';
 import Reports from './pages/Reports';
 import Senha from './pages/Senha';
@@ -45,7 +45,7 @@ export default function App() {
         <Route path="/clientes" element={<Customers />} />
         <Route path="/pedidos" element={<Orders />} />
         <Route path="/pedidos/novo" element={<OrderForm />} />
-        <Route path="/marketplaces" element={<Marketplaces />} />
+        <Route path="/instagram" element={<Instagram />} />
         <Route path="/relatorios" element={<Reports />} />
         <Route path="/admin/usuarios" element={<Users />} />
         <Route path="/senha" element={<Senha />} />

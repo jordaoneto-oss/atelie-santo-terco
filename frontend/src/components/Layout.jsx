@@ -6,8 +6,8 @@ const nav = [
   { path: '/produtos', label: 'Produtos', icon: '📦' },
   { path: '/clientes', label: 'Clientes', icon: '👥' },
   { path: '/pedidos', label: 'Pedidos', icon: '🛒' },
-  { path: '/marketplaces', label: 'Marketplaces', icon: '🔗' },
   { path: '/relatorios', label: 'Relatórios', icon: '📊' },
+  { path: '/instagram', label: 'Instagram', icon: '📸' },
 ];
 
 const adminNav = [
