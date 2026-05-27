@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: santoterco-api
+    runtime: node
+    plan: free
+    buildCommand: cd backend && npm install
+    startCommand: cd backend && node src/index.js
+    healthCheckPath: /api/health
+    disk:
+      name: sqlite-data
+      mountPath: /data
+      sizeGB: 1

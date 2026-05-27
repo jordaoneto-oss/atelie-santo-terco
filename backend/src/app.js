@@ -12,8 +12,11 @@ import userRoutes from './routes/users.js';
 import reportRoutes from './routes/reports.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const uploadDir = join(__dirname, '..', 'uploads');
-if (!existsSync(uploadDir)) mkdirSync(uploadDir, { recursive: true });
+let uploadDir;
+try {
+  uploadDir = join(__dirname, '..', 'uploads');
+  if (!existsSync(uploadDir)) mkdirSync(uploadDir, { recursive: true });
+} catch {} // read-only fs on Vercel
 
 const app = express();
 
@@ -27,7 +30,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use('/uploads', express.static(uploadDir));
+if (uploadDir) app.use('/uploads', express.static(uploadDir));
 
 app.use('/api/auth', authRoutes);
 app.use('/api/products', productRoutes);
