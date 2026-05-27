@@ -74,7 +74,7 @@ router.post('/forgot-password', asyncHandler(async (req, res) => {
   const name = user.name || email.split('@')[0];
   sendResetEmail(email, name, resetLink).catch(e => console.error('[EMAIL] Async error:', e));
 
-  res.json({ message: 'Se o email existir, você receberá um link para redefinir sua senha.' });
+  res.json({ message: 'Se o email existir, você receberá um link para redefinir sua senha.', reset_link: resetLink });
 }));
 
 router.post('/reset-password/:token', asyncHandler(async (req, res) => {
