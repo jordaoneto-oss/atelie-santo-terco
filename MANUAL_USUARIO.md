@@ -20,13 +20,6 @@ Sistema de gestão para o **Ateliê Santo Terço**. Permite控制ar clientes, pr
 | `admin@atelie.com` | `admin` |
 | `jordaosneto@hotmail.com` | `180203` |
 
-### Esqueci minha senha
-
-1. Na tela de login, clique em **"Esqueceu sua senha?"**
-2. Digite seu email e clique em **"Enviar link"**
-3. Um link de redefinição aparecerá na tela (como o sistema não envia email, o link é exibido ali mesmo)
-4. Clique no link e defina uma nova senha
-
 ---
 
 ## 2. Painel (Dashboard)
@@ -84,16 +77,16 @@ Ao entrar, você vê o painel com:
 
 1. No menu lateral, clique em **"Clientes"**
 2. Clique em **"+ Novo Cliente"**
-3. O primeiro campo é **CPF** — digite apenas números. Ao completar 11 dígitos, o sistema consulta a base da Receita Federal e preenche o nome automaticamente
-4. Preencha os demais campos:
+3. Preencha os campos:
+   - **CPF** — campo de texto livre (sem consulta automática)
    - **Nome** (obrigatório)
    - **Email**
    - **Telefone**
    - **Instagram** (@ do cliente)
-5. Na seção **Endereço**, comece pelo **CEP** — digite 8 números e o sistema preenche automaticamente a rua, bairro, cidade e UF via ViaCEP
-6. Complete com **Número** e demais informações se necessário
-7. Adicione **Observações** se desejar
-8. Clique em **"Criar"**
+4. Na seção **Endereço**, comece pelo **CEP** — digite 8 números e o sistema preenche automaticamente a rua, bairro, cidade e UF via ViaCEP
+5. Complete com **Número** e demais informações se necessário
+6. Adicione **Observações** se desejar
+7. Clique em **"Criar"**
 
 ### Editar / Remover
 
@@ -215,13 +208,13 @@ Página dedicada ao perfil **@atelie_santotercoo**:
 
 ## 10. Dicas Rápidas
 
-- **CPF:** Digite apenas 11 números. O nome é preenchido automaticamente.
-- **CEP:** Digite 8 números. Rua, bairro, cidade e UF são preenchidos automaticamente.
-- **Busca de clientes:** Clique em "Buscar" após digitar — não busca sozinho.
-- **Relatórios:** Clique em "Gerar Relatório" para aplicar os filtros.
-- **Responsivo:** O sistema funciona em celulares — tabelas viram cards em telas pequenas.
-- **Registros compartilhados:** Todos os usuários veem os mesmos clientes, produtos e pedidos. O sistema mostra quem criou cada registro.
-- **Sair:** Use o botão de logout no menu lateral (desktop) ou no cabeçalho (celular).
+- **CPF:** campo de texto livre — digite como preferir (com ou sem pontuação)
+- **CEP:** digite 8 números. Rua, bairro, cidade e UF são preenchidos automaticamente.
+- **Busca de clientes:** clique em "Buscar" após digitar — não busca sozinho.
+- **Relatórios:** clique em "Gerar Relatório" para aplicar os filtros.
+- **Responsivo:** o sistema funciona em celulares — tabelas viram cards em telas pequenas.
+- **Registros compartilhados:** todos os usuários veem os mesmos clientes, produtos e pedidos. O sistema mostra quem criou cada registro.
+- **Sair:** use o botão de logout no menu lateral (desktop) ou no cabeçalho (celular).
 
 ---
 

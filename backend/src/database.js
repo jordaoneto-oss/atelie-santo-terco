@@ -87,6 +87,7 @@ db.exec(`
     status TEXT DEFAULT 'pending',
     total REAL NOT NULL DEFAULT 0,
     notes TEXT,
+    payment_method TEXT DEFAULT 'pix',
     created_at TEXT DEFAULT (datetime('now')),
     updated_at TEXT DEFAULT (datetime('now')),
     FOREIGN KEY (user_id) REFERENCES users(id),
@@ -137,5 +138,6 @@ try { db.exec('ALTER TABLE products ADD COLUMN detalhes_memo TEXT'); } catch {}
 try { db.exec('ALTER TABLE products ADD COLUMN categoria TEXT'); } catch {}
 try { db.exec("ALTER TABLE customers ADD COLUMN updated_at TEXT DEFAULT (datetime('now'))"); } catch {}
 try { db.exec("ALTER TABLE orders ADD COLUMN updated_at TEXT DEFAULT (datetime('now'))"); } catch {}
+try { db.exec("ALTER TABLE orders ADD COLUMN payment_method TEXT DEFAULT 'pix'"); } catch {}
 
 export default db;

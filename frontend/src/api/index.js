@@ -45,6 +45,7 @@ export const api = {
     get: (id) => request(`/api/orders/${id}`),
     create: (body) => request('/api/orders', { method: 'POST', body: JSON.stringify(body) }),
     updateStatus: (id, status) => request(`/api/orders/${id}/status`, { method: 'PUT', body: JSON.stringify({ status }) }),
+    delete: (id) => request(`/api/orders/${id}`, { method: 'DELETE' }),
     summary: () => request('/api/orders/stats/summary'),
   },
   users: {

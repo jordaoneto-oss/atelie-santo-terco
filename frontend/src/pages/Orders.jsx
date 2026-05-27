@@ -2,6 +2,12 @@ import { useState, useEffect } from 'react';
 import { api } from '../api';
 import { Link } from 'react-router-dom';
 
+const PAYMENT_LABELS = {
+  pix: 'Pix',
+  credit_1x: 'Cartão 1X',
+  credit_installments: 'Cartão Parcelado',
+};
+
 const STATUS_LABELS = {
   pending: 'Pendente',
   confirmed: 'Confirmado',
@@ -46,6 +52,16 @@ export default function Orders() {
     setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
   }
 
+  async function handleDelete(id) {
+    if (!confirm('Remover este pedido?')) return;
+    try {
+      await api.orders.delete(id);
+      setOrders(prev => prev.filter(o => o.id !== id));
+    } catch (err) {
+      alert(err.message);
+    }
+  }
+
   return (
     <div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-6">
@@ -77,6 +93,7 @@ export default function Orders() {
               <th className="text-left p-4 text-sm font-medium text-brown-700">Cliente</th>
               <th className="text-left p-4 text-sm font-medium text-brown-700">Itens</th>
               <th className="text-left p-4 text-sm font-medium text-brown-700">Total</th>
+              <th className="text-left p-4 text-sm font-medium text-brown-700">Pagamento</th>
               <th className="text-left p-4 text-sm font-medium text-brown-700">Status</th>
               <th className="text-left p-4 text-sm font-medium text-brown-700">Criado por</th>
               <th className="text-right p-4 text-sm font-medium text-brown-700">Ações</th>
@@ -89,6 +106,7 @@ export default function Orders() {
                 <td className="p-4 text-sm text-brown-600">{o.customer?.name || '-'}</td>
                 <td className="p-4 text-sm text-brown-600">{o.items?.length || 0} item(ns)</td>
                 <td className="p-4 text-sm font-medium text-gold-700">R$ {Number(o.total).toFixed(2)}</td>
+                <td className="p-4 text-sm text-brown-600">{PAYMENT_LABELS[o.payment_method] || o.payment_method || 'Pix'}</td>
                 <td className="p-4">
                   <select value={o.status} onChange={e => updateStatus(o.id, e.target.value)} className={`px-2 py-1 rounded-full text-xs font-medium border-0 ${statusColors[o.status]}`}>
                     {Object.keys(STATUS_LABELS).map(s => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
@@ -99,11 +117,12 @@ export default function Orders() {
                   <div className="text-[10px] text-brown-400">{new Date(o.created_at).toLocaleString('pt-BR')}</div>
                 </td>
                 <td className="p-4 text-right">
-                  <button onClick={() => updateStatus(o.id, 'cancelled')} className="text-rose-600 text-sm hover:underline">Cancelar</button>
+                  <button onClick={() => updateStatus(o.id, 'cancelled')} className="text-rose-600 text-sm hover:underline mr-3">Cancelar</button>
+                  <button onClick={() => handleDelete(o.id)} className="text-rose-600 text-sm hover:underline">Remover</button>
                 </td>
               </tr>
             ))}
-            {orders.length === 0 && <tr><td colSpan={7} className="p-8 text-center text-brown-400">Nenhum pedido encontrado</td></tr>}
+            {orders.length === 0 && <tr><td colSpan={8} className="p-8 text-center text-brown-400">Nenhum pedido encontrado</td></tr>}
           </tbody>
         </table>
       </div>
@@ -120,6 +139,7 @@ export default function Orders() {
               <div>👤 {o.customer?.name || 'Sem cliente'}</div>
               <div>📦 {o.items?.length || 0} item(ns)</div>
               <div className="font-medium text-gold-700">💰 R$ {Number(o.total).toFixed(2)}</div>
+              <div>💳 {PAYMENT_LABELS[o.payment_method] || o.payment_method || 'Pix'}</div>
               <div>📅 {new Date(o.created_at).toLocaleDateString('pt-BR')}</div>
             </div>
             <div className="text-[10px] text-brown-400 mb-3">Criado por {o.created_by_name || '-'}</div>
@@ -128,6 +148,7 @@ export default function Orders() {
                 {Object.keys(STATUS_LABELS).map(s => <option key={s} value={s}>{STATUS_LABELS[s]}</option>)}
               </select>
               <button onClick={() => updateStatus(o.id, 'cancelled')} className="text-xs text-rose-600 py-2 px-3 rounded-lg border border-rose-200 hover:bg-rose-50 shrink-0">Cancelar</button>
+              <button onClick={() => handleDelete(o.id)} className="text-xs text-rose-600 py-2 px-3 rounded-lg border border-rose-200 hover:bg-rose-50 shrink-0">Remover</button>
             </div>
           </div>
         ))}

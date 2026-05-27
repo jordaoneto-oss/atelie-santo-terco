@@ -54,6 +54,10 @@ router.put('/:id', asyncHandler(async (req, res) => {
 }));
 
 router.delete('/:id', asyncHandler(async (req, res) => {
+  const orders = await db.prepare('SELECT COUNT(*) as count FROM orders WHERE customer_id = ?').get(req.params.id);
+  if (orders.count > 0) {
+    return res.status(400).json({ error: 'Cliente possui pedidos vinculados. Remova ou cancele os pedidos primeiro.' });
+  }
   const result = await db.prepare('DELETE FROM customers WHERE id = ?').run(req.params.id);
   if (result.changes === 0) return res.status(404).json({ error: 'Cliente não encontrado' });
   res.json({ message: 'Cliente removido' });

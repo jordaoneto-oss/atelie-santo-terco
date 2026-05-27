@@ -28,8 +28,12 @@ export default function Products() {
 
   async function handleDelete(id) {
     if (!confirm('Remover este produto?')) return;
-    await api.products.delete(id);
-    setProducts(prev => prev.filter(p => p.id !== id));
+    try {
+      await api.products.delete(id);
+      setProducts(prev => prev.filter(p => p.id !== id));
+    } catch (err) {
+      alert(err.message);
+    }
   }
 
   return (

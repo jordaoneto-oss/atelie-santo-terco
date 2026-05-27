@@ -66,8 +66,12 @@ export default function Customers() {
 
   async function handleDelete(id) {
     if (!confirm('Remover este cliente?')) return;
-    await api.customers.delete(id);
-    setCustomers(prev => prev.filter(c => c.id !== id));
+    try {
+      await api.customers.delete(id);
+      setCustomers(prev => prev.filter(c => c.id !== id));
+    } catch (err) {
+      alert(err.message);
+    }
   }
 
   return (

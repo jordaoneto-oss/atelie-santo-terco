@@ -9,6 +9,7 @@ export default function OrderForm() {
   const [customerId, setCustomerId] = useState('');
   const [items, setItems] = useState([{ product_id: '', quantity: 1 }]);
   const [notes, setNotes] = useState('');
+  const [paymentMethod, setPaymentMethod] = useState('pix');
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
@@ -35,6 +36,7 @@ export default function OrderForm() {
       await api.orders.create({
         customer_id: customerId ? parseInt(customerId) : null,
         notes,
+        payment_method: paymentMethod,
         items: items.map(i => ({ product_id: parseInt(i.product_id), quantity: parseInt(i.quantity) || 1 })),
       });
       navigate('/pedidos');
@@ -70,6 +72,15 @@ export default function OrderForm() {
               </div>
             </div>
           ))}
+        </div>
+
+        <div>
+          <label className="text-sm font-medium text-brown-700">Forma de Pagamento</label>
+          <select className="w-full p-3 rounded-lg border border-gold-200 bg-offwhite mt-1" value={paymentMethod} onChange={e => setPaymentMethod(e.target.value)}>
+            <option value="pix">Pix</option>
+            <option value="credit_1x">Cartão de Crédito 1X</option>
+            <option value="credit_installments">Cartão de Crédito Parcelado</option>
+          </select>
         </div>
 
         <div className="text-right text-lg font-bold text-gold-700">Total: R$ {calcTotal().toFixed(2)}</div>

@@ -69,6 +69,10 @@ router.put('/:id', asyncHandler(async (req, res) => {
 }));
 
 router.delete('/:id', asyncHandler(async (req, res) => {
+  const items = await db.prepare('SELECT COUNT(*) as count FROM order_items WHERE product_id = ?').get(req.params.id);
+  if (items.count > 0) {
+    return res.status(400).json({ error: 'Produto possui itens em pedidos. Não é possível remover.' });
+  }
   const result = await db.prepare('DELETE FROM products WHERE id = ?').run(req.params.id);
   if (result.changes === 0) return res.status(404).json({ error: 'Produto não encontrado' });
   res.json({ message: 'Produto removido' });

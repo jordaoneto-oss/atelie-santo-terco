@@ -51,8 +51,11 @@ router.get('/:id', asyncHandler(async (req, res) => {
 }));
 
 router.post('/', asyncHandler(async (req, res) => {
-  const { customer_id, items, notes } = req.body;
+  const { customer_id, items, notes, payment_method } = req.body;
   if (!items || !items.length) return res.status(400).json({ error: 'Pedido deve ter ao menos 1 item' });
+
+  const validPayments = ['credit_1x', 'credit_installments', 'pix'];
+  const method = validPayments.includes(payment_method) ? payment_method : 'pix';
 
   let total = 0;
   for (const item of items) {
@@ -61,8 +64,8 @@ router.post('/', asyncHandler(async (req, res) => {
     total += product.price * (item.quantity || 1);
   }
 
-  const orderResult = await db.prepare('INSERT INTO orders (user_id, customer_id, total, notes) VALUES (?, ?, ?, ?)')
-    .run(req.user.id, customer_id || null, total, notes || '');
+  const orderResult = await db.prepare('INSERT INTO orders (user_id, customer_id, total, notes, payment_method) VALUES (?, ?, ?, ?, ?)')
+    .run(req.user.id, customer_id || null, total, notes || '', method);
 
   const insertItem = db.prepare('INSERT INTO order_items (order_id, product_id, variant_id, quantity, unit_price) VALUES (?, ?, ?, ?, ?)');
   for (const item of items) {
@@ -84,6 +87,13 @@ router.put('/:id/status', asyncHandler(async (req, res) => {
   await db.prepare("UPDATE orders SET status = ?, updated_at = datetime('now') WHERE id = ?").run(status, req.params.id);
   const updated = await db.prepare('SELECT o.*, u.name as created_by_name FROM orders o LEFT JOIN users u ON u.id = o.user_id WHERE o.id = ?').get(req.params.id);
   res.json(updated);
+}));
+
+router.delete('/:id', asyncHandler(async (req, res) => {
+  const order = await db.prepare('SELECT * FROM orders WHERE id = ?').get(req.params.id);
+  if (!order) return res.status(404).json({ error: 'Pedido não encontrado' });
+  await db.prepare('DELETE FROM orders WHERE id = ?').run(req.params.id);
+  res.json({ message: 'Pedido removido' });
 }));
 
 export default router;

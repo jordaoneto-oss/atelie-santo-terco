@@ -22,10 +22,10 @@ Sistema full-stack SaaS para gestão de vendas do **Ateliê Santo Terço**, espe
 | | Express | 4 |
 | | JSON Web Token | 9 |
 | | bcryptjs | 2 |
-| Banco | SQLite (dev) / PostgreSQL (supabase/produção) | |
+| Banco | SQLite (better-sqlite3) | |
 | ORM | Nenhum (SQL raw) | |
-| Deploy FE | Vercel | |
-| Deploy BE | Render | |
+| Deploy FE | Vercel (static SPA) | |
+| Deploy BE | Render (web service + disco persistente) | |
 
 ---
 
@@ -33,9 +33,9 @@ Sistema full-stack SaaS para gestão de vendas do **Ateliê Santo Terço**, espe
 
 ```
 ┌─────────────┐     ┌──────────────┐     ┌──────────────────┐
-│  React SPA  │────▶│  Express API │────▶│ SQLite / Postgres│
-│  :5173 (dev)│     │  :3001 (dev) │     │                  │
-│ Vercel (prd)│     │ Render (prd) │     │                  │
+│  React SPA  │────▶│  Express API │────▶│  SQLite (disco)  │
+│  :5173 (dev)│     │  :3001 (dev) │     │   /data/         │
+│ Vercel (prd)│     │ Render (prd) │     │   3dprint.db     │
 └─────────────┘     └──────────────┘     └──────────────────┘
 ```
 
@@ -45,10 +45,8 @@ Sistema full-stack SaaS para gestão de vendas do **Ateliê Santo Terço**, espe
 3. Toda requisição autenticada envia `Authorization: Bearer <token>`
 4. Middleware `auth.js` valida o token e anexa `req.user`
 
-### Modo dual de banco
-O arquivo `backend/src/database.js` detecta a variável `DATABASE_URL`:
-- **Com `DATABASE_URL`:** usa `pg` (PostgreSQL) com `?` → `$1` e `datetime('now')` → `CURRENT_TIMESTAMP`
-- **Sem `DATABASE_URL`:** usa `better-sqlite3` local
+### Banco de dados
+Apenas SQLite via `better-sqlite3`. O arquivo fica em `/data/3dprint.db` no Render (disco persistente) ou `backend/data/3dprint.db` em ambiente local. Não há suporte a PostgreSQL.
 
 ---
 
@@ -58,15 +56,17 @@ O arquivo `backend/src/database.js` detecta a variável `DATABASE_URL`:
 /
 ├── backend/
 │   └── src/
-│       ├── index.js          # Servidor Express, rotas, CORS
-│       ├── database.js       # Conexão dual SQLite/PostgreSQL, schema DDL
+│       ├── index.js          # Servidor Express
+│       ├── app.js            # Configuração Express (helmet, CORS, rate-limit, rotas, backup, seed)
+│       ├── database.js       # Conexão SQLite puro, schema DDL
+│       ├── backup.js         # Backup automático + manual do SQLite
 │       ├── seed.js           # Seed de dados iniciais
 │       ├── middleware/
 │       │   ├── auth.js       # Middleware JWT
 │       │   └── asyncHandler.js
 │       └── routes/
-│           ├── auth.js       # Login, registro, esqueci senha, resetar
-│           ├── products.js   # CRUD produtos
+│           ├── auth.js       # Login, registro, me, alterar senha
+│           ├── products.js   # CRUD produtos + variantes
 │           ├── customers.js  # CRUD clientes
 │           ├── orders.js     # CRUD pedidos + status
 │           ├── reports.js    # Relatórios de vendas
@@ -90,10 +90,8 @@ O arquivo `backend/src/database.js` detecta a variável `DATABASE_URL`:
 │           ├── Reports.jsx
 │           ├── Instagram.jsx
 │           ├── Senha.jsx
-│           ├── ResetarSenha.jsx
 │           └── Users.jsx
-│       public/
-│           └── logo.jpg      # Foto do perfil Instagram
+├── vercel.json               # Configuração Vercel (SPA fallback)
 ├── DOCUMENTACAO.md
 └── MANUAL_USUARIO.md
 ```
@@ -112,25 +110,24 @@ customers (1) ──→ (N) orders
 orders (1) ──→ (N) order_items
 products (1) ──→ (N) order_items
 products (1) ──→ (N) product_variants
-users (1) ──→ (N) reset_tokens
 ```
 
 ### Tabela: `users`
 
 | Coluna | Tipo | Descrição |
 |--------|------|-----------|
-| id | SERIAL/PK | |
+| id | INTEGER PK | autoincrement |
 | name | TEXT | Nome completo |
 | email | TEXT UNIQUE | Email de login |
 | password_hash | TEXT | bcrypt hash |
 | role | TEXT | `admin` |
-| created_at | TIMESTAMP | |
+| created_at | TEXT | ISO datetime |
 
 ### Tabela: `products`
 
 | Coluna | Tipo | Descrição |
 |--------|------|-----------|
-| id | SERIAL/PK | |
+| id | INTEGER PK | |
 | user_id | INTEGER FK | Criador |
 | name | TEXT | Nome do produto |
 | description | TEXT | Descrição |
@@ -148,14 +145,14 @@ users (1) ──→ (N) reset_tokens
 | status | TEXT | `active`, `inactive`, `archived` |
 | dimensions | TEXT | Dimensões |
 | weight | REAL | Peso |
-| created_at | TIMESTAMP | |
-| updated_at | TIMESTAMP | |
+| created_at | TEXT | |
+| updated_at | TEXT | |
 
 ### Tabela: `product_variants`
 
 | Coluna | Tipo | Descrição |
 |--------|------|-----------|
-| id | SERIAL/PK | |
+| id | INTEGER PK | |
 | product_id | INTEGER FK | Produto pai |
 | name | TEXT | Nome da variação |
 | color | TEXT | Cor |
@@ -167,9 +164,9 @@ users (1) ──→ (N) reset_tokens
 
 | Coluna | Tipo | Descrição |
 |--------|------|-----------|
-| id | SERIAL/PK | |
+| id | INTEGER PK | |
 | user_id | INTEGER FK | Criador |
-| cpf | TEXT | CPF (opcional) |
+| cpf | TEXT | CPF (opcional, sem validação) |
 | name | TEXT | Nome |
 | email | TEXT | Email |
 | phone | TEXT | Telefone |
@@ -182,43 +179,32 @@ users (1) ──→ (N) reset_tokens
 | address_zipcode | TEXT | CEP |
 | instagram | TEXT | @ Instagram |
 | notes | TEXT | Observações |
-| created_at | TIMESTAMP | |
-| updated_at | TIMESTAMP | |
+| created_at | TEXT | |
+| updated_at | TEXT | |
 
 ### Tabela: `orders`
 
 | Coluna | Tipo | Descrição |
 |--------|------|-----------|
-| id | SERIAL/PK | |
+| id | INTEGER PK | |
 | user_id | INTEGER FK | Criador |
 | customer_id | INTEGER FK | Cliente |
 | status | TEXT | `pending`, `confirmed`, `printing`, `shipped`, `delivered`, `cancelled` |
 | total | REAL | Valor total |
 | notes | TEXT | Observações |
-| created_at | TIMESTAMP | |
-| updated_at | TIMESTAMP | |
+| created_at | TEXT | |
+| updated_at | TEXT | |
 
 ### Tabela: `order_items`
 
 | Coluna | Tipo | Descrição |
 |--------|------|-----------|
-| id | SERIAL/PK | |
+| id | INTEGER PK | |
 | order_id | INTEGER FK | Pedido |
 | product_id | INTEGER FK | Produto |
 | variant_id | INTEGER | Variação |
 | quantity | INTEGER | Quantidade |
 | unit_price | REAL | Preço unitário |
-
-### Tabela: `reset_tokens`
-
-| Coluna | Tipo | Descrição |
-|--------|------|-----------|
-| id | SERIAL/PK | |
-| user_id | INTEGER FK | |
-| token | TEXT UNIQUE | Token UUID |
-| expires_at | TIMESTAMP | Data de expiração |
-| used | INTEGER | 0/1 |
-| created_at | TIMESTAMP | |
 
 ---
 
@@ -228,12 +214,10 @@ users (1) ──→ (N) reset_tokens
 
 | Método | Rota | Autenticação | Descrição |
 |--------|------|-------------|-----------|
-| POST | `/login` | Não | Login (email + senha → JWT) |
+| POST | `/login` | Não | Login (email + senha → JWT). Rate-limit: 10 tentativas / 15 min |
 | POST | `/register` | Não | Registrar novo usuário |
 | GET | `/me` | Sim | Dados do usuário logado |
-| POST | `/forgot-password` | Não | Gera token de reset, retorna `dev_link` |
-| POST | `/reset-password/:token` | Não | Redefine senha com token |
-| PUT | `/reset-password` | Sim | Alterar senha (autenticado) |
+| PUT | `/reset-password` | Sim | Alterar senha (autenticado, requer senha atual) |
 
 ### Produtos (`/api/products`)
 
@@ -244,6 +228,8 @@ users (1) ──→ (N) reset_tokens
 | POST | `/` | Criar |
 | PUT | `/:id` | Atualizar |
 | DELETE | `/:id` | Remover |
+| POST | `/:id/variants` | Adicionar variação |
+| DELETE | `/variants/:id` | Remover variação |
 
 ### Clientes (`/api/customers`)
 
@@ -264,6 +250,8 @@ users (1) ──→ (N) reset_tokens
 | POST | `/` | Criar |
 | PUT | `/:id` | Atualizar |
 | DELETE | `/:id` | Remover |
+| PUT | `/:id/status` | Atualizar status |
+| GET | `/stats/summary` | Resumo para dashboard |
 
 ### Relatórios (`/api/reports`)
 
@@ -280,6 +268,15 @@ users (1) ──→ (N) reset_tokens
 | PUT | `/:id` | Atualizar |
 | DELETE | `/:id` | Remover |
 
+### Utilitários
+
+| Método | Rota | Descrição |
+|--------|------|-----------|
+| GET | `/api/health` | Health check |
+| POST | `/api/seed` | Executar seed de dados iniciais |
+| POST | `/api/backup` | Criar backup manual do SQLite |
+| GET | `/api/backup` | Listar backups disponíveis |
+
 ---
 
 ## 7. Frontend — Rotas e Páginas
@@ -288,14 +285,12 @@ users (1) ──→ (N) reset_tokens
 |------|--------|-----------|
 | `/` | Dashboard | Painel com métricas resumidas |
 | `/login` | Login | Autenticação |
-| `/reset-password/:token` | ResetarSenha | Redefinição de senha (público) |
 | `/produtos` | Products | Lista de produtos |
 | `/produtos/novo` | ProductForm | Cadastrar produto |
-| `/produtos/:id/editar` | ProductForm | Editar produto |
+| `/produtos/:id` | ProductForm | Editar produto |
 | `/clientes` | Customers | Lista de clientes |
 | `/pedidos` | Orders | Lista de pedidos |
 | `/pedidos/novo` | OrderForm | Novo pedido |
-| `/pedidos/:id/editar` | OrderForm | Editar pedido |
 | `/relatorios` | Reports | Relatórios de vendas |
 | `/instagram` | Instagram | Perfil Instagram @atelie_santotercoo |
 | `/senha` | Senha | Alterar senha (autenticado) |
@@ -335,27 +330,48 @@ Todas as listas usam:
 | `admin@atelie.com` | `admin` | Administrador | admin |
 | `jordaosneto@hotmail.com` | `180203` | Jordão Neto | admin |
 
-### Fluxo de "Esqueci Senha"
+### Fluxo de alteração de senha
 
-1. Usuário informa email em `/login`
-2. Backend gera token UUID, armazena em `reset_tokens` com expiração de 1 hora
-3. Retorna `dev_link` no JSON (simula envio de email)
-4. Usuário acessa o link com token
-5. Formulário `ResetarSenha.jsx` coleta nova senha e confirmação
-6. Token é marcado como usado
+1. Usuário clica em "Senha" no menu lateral
+2. Informa senha atual, nova senha e confirmação
+3. Backend valida senha atual e atualiza o hash
+
+Não há funcionalidade de "esqueci minha senha" — o recurso foi removido.
 
 ---
 
-## 9. Integrações
+## 9. Segurança
+
+- **helmet:** headers de segurança HTTP (X-Frame-Options, X-Content-Type-Options, etc.)
+- **rate-limit global:** 200 requisições / 15 min por IP
+- **rate-limit login:** 10 tentativas / 15 min por IP
+- **CORS:** restrito ao origin do frontend (`https://santoterco.vercel.app` ou variável `CORS_ORIGIN`)
+- **JWT:** tokens gerados com `JWT_SECRET` (configurado como env var no Render)
+- **Validação de email:** regex de formato nos endpoints de login e registro
+
+---
+
+## 10. Backup do Banco de Dados
+
+O sistema faz backup automático do SQLite:
+
+- **Ao iniciar:** um backup é criado sempre que o servidor sobe
+- **Agendado:** a cada 6 horas
+- **Manual:** via `POST /api/backup`
+- **Listagem:** via `GET /api/backup`
+- **Retação:** mantém os últimos 7 backups, remove os mais antigos
+- **Local:** `/data/backups/` no Render, `backend/data/backups/` localmente
+
+---
+
+## 11. Integrações
 
 ### ViaCEP (cadastro de clientes)
 - Campo CEP consulta `https://viacep.com.br/ws/{cep}/json/`
 - Preenche automaticamente: Rua, Bairro, Cidade, UF
 
-### ReceitaWS (cadastro de clientes)
-- Campo CPF consulta `https://www.receitaws.com.br/v1/cpf/{cpf}`
-- Preenche automaticamente: Nome
-- Limitação: email e telefone não são retornados por APIs públicas governamentais
+### CPF
+- Campo de texto livre, sem validação ou consulta a API externa
 
 ### Instagram
 - Página `/instagram` exibe perfil @atelie_santotercoo
@@ -364,13 +380,15 @@ Todas as listas usam:
 
 ---
 
-## 10. Deploy
+## 12. Deploy
 
 ### Frontend (Vercel)
 
 - Projeto: `santoterco`
 - URL: `https://santoterco.vercel.app`
-- Build: `vite build`
+- Build: `cd frontend && npm install && npm run build`
+- Output: `frontend/dist`
+- SPA fallback: todas as rotas → `index.html`
 - Variável de ambiente: `VITE_API_URL=https://atelie-santo-terco-backend.onrender.com`
 
 ### Backend (Render)
@@ -380,7 +398,8 @@ Todas as listas usam:
 - Root: `backend`
 - Build: `npm install`
 - Start: `node src/index.js`
-- Banco: SQLite (data/3dprint.db) — sem `DATABASE_URL` configurada
+- Disco persistente: `/data` montado no Render (contém `3dprint.db` e `backups/`)
+- Auto-deploy: habilitado a partir do branch `main` do GitHub
 
 ### Git
 
@@ -391,17 +410,18 @@ git push -u origin main
 
 ---
 
-## 11. Variáveis de Ambiente
+## 13. Variáveis de Ambiente
 
-### Backend
+### Backend (configuradas no Render)
 
 | Variável | Obrigatória | Descrição |
 |----------|-------------|-----------|
 | `PORT` | Não | Porta (padrão 3001) |
-| `DATABASE_URL` | Não | URL PostgreSQL (ausente → SQLite) |
 | `JWT_SECRET` | Não | Segredo JWT (fallback interno) |
+| `CORS_ORIGIN` | Não | Origin permitida (padrão `https://santoterco.vercel.app`) |
+| `APP_URL` | Não | URL base do backend (usada internamente) |
 
-### Frontend
+### Frontend (configurada no Vercel)
 
 | Variável | Obrigatória | Descrição |
 |----------|-------------|-----------|
@@ -409,7 +429,7 @@ git push -u origin main
 
 ---
 
-## 12. Desenvolvimento Local
+## 14. Desenvolvimento Local
 
 ```bash
 # Backend
@@ -426,17 +446,16 @@ npm run dev     # http://localhost:5173
 
 ---
 
-## 13. Regras de Negócio
+## 15. Regras de Negócio
 
 1. **Registros unificados:** Produtos, clientes e pedidos são compartilhados entre todos os usuários. Cada registro mostra `created_by_name` para identificar quem criou.
 2. **Status de pedidos:** Pendente → Confirmado → Impressão → Enviado → Entregue. Qualquer status pode ir para Cancelado.
 3. **Status de produtos:** Ativo (visível), Inativo, Arquivado.
 4. **Relatórios:** Filtros por cliente, categoria, data início/fim. Três visões: por produto, por cliente, por categoria.
-5. **Redefinição de senha:** Sem serviço de email — o link de reset é exibido no console do backend e retornado como `dev_link` na resposta da API.
 
 ---
 
-## 14. Manutenção
+## 16. Manutenção
 
 ### Migração de schema
 Alterações no banco são feitas via:
@@ -449,4 +468,10 @@ Alterações no banco são feitas via:
 cd backend
 npm run seed
 ```
-Reexecutar é seguro — usa `INSERT OR IGNORE` (SQLite) ou `ON CONFLICT DO NOTHING` (PostgreSQL).
+Reexecutar é seguro — usa `INSERT OR IGNORE` (SQLite).
+
+### Backup manual
+```bash
+curl -X POST https://atelie-santo-terco-backend.onrender.com/api/backup
+curl https://atelie-santo-terco-backend.onrender.com/api/backup
+```
