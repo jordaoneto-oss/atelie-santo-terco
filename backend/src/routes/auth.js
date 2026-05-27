@@ -5,6 +5,7 @@ import rateLimit from 'express-rate-limit';
 import db from '../database.js';
 import { generateToken, authMiddleware } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/asyncHandler.js';
+import { sendResetEmail } from '../mail.js';
 
 const router = Router();
 
@@ -69,10 +70,11 @@ router.post('/forgot-password', asyncHandler(async (req, res) => {
 
   const appUrl = process.env.APP_URL || 'http://localhost:5173';
   const resetLink = `${appUrl}/reset-password/${token}`;
-  console.log(`\n[EMAIL SIMULADO] Link de redefinição para ${email}:`);
-  console.log(`  ${resetLink}\n`);
 
-  res.json({ message: 'Se o email existir, você receberá um link para redefinir sua senha.', dev_link: resetLink });
+  const name = user.name || email.split('@')[0];
+  await sendResetEmail(email, name, resetLink);
+
+  res.json({ message: 'Se o email existir, você receberá um link para redefinir sua senha.' });
 }));
 
 router.post('/reset-password/:token', asyncHandler(async (req, res) => {
