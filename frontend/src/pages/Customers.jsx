@@ -21,7 +21,6 @@ export default function Customers() {
   const [editing, setEditing] = useState(null);
   const blankForm = { cpf: '', name: '', email: '', phone: '', address_street: '', address_number: '', address_neighborhood: '', address_city: '', address_state: '', address_zipcode: '', instagram: '', notes: '' };
   const [form, setForm] = useState({ ...blankForm });
-  const [cpfLoading, setCpfLoading] = useState(false);
 
   useEffect(() => {
     api.customers.list(searchApplied ? { search: searchApplied } : {}).then(setCustomers);
@@ -91,21 +90,8 @@ export default function Customers() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 mb-4 sm:mb-6">
             <div className="sm:col-span-2">
               <div className="flex items-center gap-2">
-                <input className="flex-1 p-3 rounded-lg border border-gold-200 bg-offwhite text-sm" placeholder="CPF (apenas números)" value={form.cpf} onChange={async e => {
-                  const v = e.target.value.replace(/\D/g, '').slice(0, 11);
-                  setForm(p => ({ ...p, cpf: v }));
-                  if (v.length === 11) {
-                    setCpfLoading(true);
-                    try {
-                      const res = await fetch(`https://www.receitaws.com.br/v1/cpf/${v}`);
-                      const d = await res.json();
-                      if (d.status === 'OK') { setForm(p => ({ ...p, name: d.nome || p.name })); }
-                    } catch {} finally { setCpfLoading(false); }
-                  }
-                }} />
-                {cpfLoading && <div className="w-4 h-4 rounded-full border-2 border-gold-400 border-t-transparent animate-spin shrink-0" />}
+                <input className="flex-1 p-3 rounded-lg border border-gold-200 bg-offwhite text-sm" placeholder="CPF" value={form.cpf} onChange={e => setForm(p => ({ ...p, cpf: e.target.value }))} />
               </div>
-              <p className="text-xs text-brown-400 mt-1">Preenche o nome automaticamente via API pública (ReceitaWS). E-mail e telefone não são disponibilizados por nenhuma base governamental aberta.</p>
             </div>
             <input className="p-3 rounded-lg border border-gold-200 bg-offwhite text-sm" placeholder="Nome *" value={form.name} onChange={setField('name')} required />
             <input className="p-3 rounded-lg border border-gold-200 bg-offwhite text-sm" placeholder="Email" type="email" value={form.email} onChange={setField('email')} />
