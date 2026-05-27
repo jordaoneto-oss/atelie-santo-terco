@@ -23,8 +23,6 @@ export const api = {
     register: (body) => request('/api/auth/register', { method: 'POST', body: JSON.stringify(body) }),
     me: () => request('/api/auth/me'),
     resetPassword: (body) => request('/api/auth/reset-password', { method: 'PUT', body: JSON.stringify(body) }),
-    forgotPassword: (body) => request('/api/auth/forgot-password', { method: 'POST', body: JSON.stringify(body) }),
-    resetWithToken: (token, body) => request(`/api/auth/reset-password/${token}`, { method: 'POST', body: JSON.stringify(body) }),
   },
   products: {
     list: (params) => request(`/api/products?${new URLSearchParams(params || {})}`),

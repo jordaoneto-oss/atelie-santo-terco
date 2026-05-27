@@ -13,7 +13,7 @@ import Instagram from './pages/Instagram';
 import Users from './pages/Users';
 import Reports from './pages/Reports';
 import Senha from './pages/Senha';
-import ResetarSenha from './pages/ResetarSenha';
+
 
 export default function App() {
   const [user, setUser] = useState(null);
@@ -29,7 +29,6 @@ export default function App() {
   if (!user) {
     return (
       <Routes>
-        <Route path="/reset-password/:token" element={<ResetarSenha />} />
         <Route path="*" element={<Login onLogin={setUser} />} />
       </Routes>
     );
