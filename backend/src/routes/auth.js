@@ -1,16 +1,28 @@
 import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import crypto from 'crypto';
+import rateLimit from 'express-rate-limit';
 import db from '../database.js';
 import { generateToken, authMiddleware } from '../middleware/auth.js';
 import { asyncHandler } from '../middleware/asyncHandler.js';
 
 const router = Router();
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const loginLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 10,
+  message: { error: 'Muitas tentativas de login. Tente novamente em 15 minutos.' },
+});
+
 router.post('/register', asyncHandler(async (req, res) => {
   const { name, email, password } = req.body;
   if (!name || !email || !password) {
     return res.status(400).json({ error: 'Nome, email e senha são obrigatórios' });
+  }
+  if (!EMAIL_RE.test(email)) {
+    return res.status(400).json({ error: 'Formato de email inválido' });
   }
   const existing = await db.prepare('SELECT id FROM users WHERE email = ?').get(email);
   if (existing) return res.status(409).json({ error: 'Email já cadastrado' });
@@ -22,9 +34,13 @@ router.post('/register', asyncHandler(async (req, res) => {
   res.status(201).json({ user, token });
 }));
 
-router.post('/login', asyncHandler(async (req, res) => {
+router.post('/login', loginLimiter, asyncHandler(async (req, res) => {
   const { email, password } = req.body;
   if (!email || !password) return res.status(400).json({ error: 'Email e senha são obrigatórios' });
+
+  if (!EMAIL_RE.test(email)) {
+    return res.status(400).json({ error: 'Formato de email inválido' });
+  }
 
   const user = await db.prepare('SELECT * FROM users WHERE email = ?').get(email);
   if (!user || !bcrypt.compareSync(password, user.password_hash)) {
@@ -51,7 +67,8 @@ router.post('/forgot-password', asyncHandler(async (req, res) => {
   const expires = new Date(Date.now() + 3600000).toISOString();
   await db.prepare('INSERT INTO reset_tokens (user_id, token, expires_at) VALUES (?, ?, ?)').run(user.id, token, expires);
 
-  const resetLink = `http://localhost:5173/reset-password/${token}`;
+  const appUrl = process.env.APP_URL || 'http://localhost:5173';
+  const resetLink = `${appUrl}/reset-password/${token}`;
   console.log(`\n[EMAIL SIMULADO] Link de redefinição para ${email}:`);
   console.log(`  ${resetLink}\n`);
 
