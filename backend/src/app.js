@@ -41,6 +41,16 @@ app.use('/api/reports', reportRoutes);
 
 app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
 
+import { runSeed } from './seed.js';
+app.post('/api/seed', async (req, res) => {
+  try {
+    await runSeed();
+    res.json({ ok: true, message: 'Seed executado' });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 app.use((err, req, res, next) => {
   console.error('Erro:', err);
   res.status(500).json({ error: err.message || 'Erro interno do servidor' });
