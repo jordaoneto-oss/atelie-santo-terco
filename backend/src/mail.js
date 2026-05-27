@@ -14,6 +14,9 @@ function getTransporter() {
         user: process.env.SMTP_USER,
         pass: process.env.SMTP_PASS,
       },
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 10000,
     });
   } else {
     transporter = {
@@ -29,8 +32,15 @@ function getTransporter() {
 }
 
 export async function sendResetEmail(email, name, resetLink) {
+  const from = process.env.SMTP_FROM || 'naoresponda@ateliesantoterco.com.br';
   const subject = 'Redefinição de senha - Ateliê Santo Terço';
   const text = `Olá ${name},\n\nVocê solicitou a redefinição da sua senha.\n\nClique no link abaixo para criar uma nova senha:\n${resetLink}\n\nEste link expira em 1 hora.\n\nSe você não solicitou esta alteração, ignore este email.\n\nAtenciosamente,\nAteliê Santo Terço`;
 
-  await getTransporter().sendMail({ to: email, subject, text });
+  try {
+    const info = await getTransporter().sendMail({ from, to: email, subject, text });
+    console.log('[EMAIL] Enviado para', email, '| ID:', info.messageId);
+  } catch (err) {
+    console.error('[EMAIL] Erro ao enviar para', email, ':', err.message);
+    console.log(`[EMAIL SIMULADO] Link para ${email}: ${resetLink}`);
+  }
 }
