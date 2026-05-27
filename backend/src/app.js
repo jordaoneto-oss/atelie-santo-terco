@@ -13,6 +13,7 @@ import orderRoutes from './routes/orders.js';
 import userRoutes from './routes/users.js';
 import reportRoutes from './routes/reports.js';
 import { runSeed } from './seed.js';
+import { createBackup, listBackups } from './backup.js';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 let uploadDir;
@@ -59,6 +60,21 @@ app.post('/api/seed', async (req, res) => {
   } catch (e) {
     res.status(500).json({ error: e.message });
   }
+});
+
+app.post('/api/backup', async (req, res) => {
+  try {
+    const file = createBackup();
+    if (!file) return res.status(500).json({ error: 'Banco de dados não encontrado' });
+    res.json({ ok: true, message: 'Backup criado', file });
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.get('/api/backup', async (req, res) => {
+  const backups = listBackups();
+  res.json(backups);
 });
 
 app.use((err, req, res, next) => {
