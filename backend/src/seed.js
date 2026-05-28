@@ -3,16 +3,16 @@ import bcrypt from 'bcryptjs';
 async function seedPg(pool) {
   const hash = bcrypt.hashSync('admin123', 10);
 
-  async function upsertUser(name, email, password, role) {
+  async function upsertUser(name, email, password, role, phone) {
     const existing = await pool.query('SELECT id FROM users WHERE email = $1', [email]);
     if (existing.rows.length === 0) {
       const h = bcrypt.hashSync(password, 10);
-      await pool.query('INSERT INTO users (name, email, password_hash, role) VALUES ($1, $2, $3, $4)', [name, email, h, role]);
+      await pool.query('INSERT INTO users (name, email, phone, password_hash, role) VALUES ($1, $2, $3, $4, $5)', [name, email, phone || null, h, role]);
     }
   }
 
-  await upsertUser('Juliana Rocha', 'profajurocha@gmail.com', 'admin123', 'admin');
-  await upsertUser('Administrador', 'admin@atelie.com', 'admin', 'admin');
+  await upsertUser('Juliana Rocha', 'profajurocha@gmail.com', 'admin123', 'admin', '11999990001');
+  await upsertUser('Administrador', 'admin@atelie.com', 'admin', 'admin', '11999990002');
   await upsertUser('Jordão Neto', 'jordaosneto@hotmail.com', '180203', 'admin');
 
   const uid = (await pool.query("SELECT id FROM users WHERE email = 'profajurocha@gmail.com'")).rows[0].id;
@@ -114,10 +114,10 @@ async function main() {
   const hash = bcrypt.hashSync('admin123', 10);
 
   if (!db.prepare('SELECT id FROM users WHERE email = ?').get('profajurocha@gmail.com')) {
-    db.exec(`INSERT INTO users (name, email, password_hash, role) VALUES ('Juliana Rocha', 'profajurocha@gmail.com', '${hash}', 'admin')`);
+    db.exec(`INSERT INTO users (name, email, phone, password_hash, role) VALUES ('Juliana Rocha', 'profajurocha@gmail.com', '11999990001', '${hash}', 'admin')`);
   }
   if (!db.prepare('SELECT id FROM users WHERE email = ?').get('admin@atelie.com')) {
-    db.exec(`INSERT INTO users (name, email, password_hash, role) VALUES ('Administrador', 'admin@atelie.com', '${bcrypt.hashSync('admin', 10)}', 'admin')`);
+    db.exec(`INSERT INTO users (name, email, phone, password_hash, role) VALUES ('Administrador', 'admin@atelie.com', '11999990002', '${bcrypt.hashSync('admin', 10)}', 'admin')`);
   }
   if (!db.prepare('SELECT id FROM users WHERE email = ?').get('jordaosneto@hotmail.com')) {
     db.exec(`INSERT INTO users (name, email, password_hash, role) VALUES ('Jordão Neto', 'jordaosneto@hotmail.com', '${bcrypt.hashSync('180203', 10)}', 'admin')`);

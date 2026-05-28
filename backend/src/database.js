@@ -16,6 +16,7 @@ db.exec(`
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
+    phone TEXT,
     password_hash TEXT NOT NULL,
     role TEXT DEFAULT 'admin',
     created_at TEXT DEFAULT (datetime('now'))
@@ -129,6 +130,7 @@ try { db.exec('ALTER TABLE customers ADD COLUMN delivery_city TEXT'); } catch {}
 try { db.exec('ALTER TABLE customers ADD COLUMN delivery_state TEXT'); } catch {}
 try { db.exec('ALTER TABLE customers ADD COLUMN delivery_zipcode TEXT'); } catch {}
 try { db.exec('ALTER TABLE customers ADD COLUMN cpf TEXT'); } catch {}
+try { db.exec("ALTER TABLE users ADD COLUMN phone TEXT"); } catch {}
 try { db.exec('ALTER TABLE products ADD COLUMN crucifixo TEXT'); } catch {}
 try { db.exec('ALTER TABLE products ADD COLUMN entremeio TEXT'); } catch {}
 try { db.exec('ALTER TABLE products ADD COLUMN contas TEXT'); } catch {}

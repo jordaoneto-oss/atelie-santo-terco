@@ -2,6 +2,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import { api } from './api';
 import Login from './pages/Login';
+import ResetPassword from './pages/ResetPassword';
 import Dashboard from './pages/Dashboard';
 import Layout from './components/Layout';
 import Products from './pages/Products';
@@ -29,6 +30,7 @@ export default function App() {
   if (!user) {
     return (
       <Routes>
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="*" element={<Login onLogin={setUser} />} />
       </Routes>
     );

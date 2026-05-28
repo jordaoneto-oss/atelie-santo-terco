@@ -5,12 +5,12 @@ export default function Users() {
   const [users, setUsers] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editing, setEditing] = useState(null);
-  const [form, setForm] = useState({ name: '', email: '', password: '', role: 'viewer' });
+  const [form, setForm] = useState({ name: '', email: '', phone: '', password: '', role: 'viewer' });
   const [error, setError] = useState('');
 
   useEffect(() => { api.users.list().then(setUsers).catch(() => {}); }, []);
 
-  function resetForm() { setForm({ name: '', email: '', password: '', role: 'viewer' }); setEditing(null); setError(''); }
+  function resetForm() { setForm({ name: '', email: '', phone: '', password: '', role: 'viewer' }); setEditing(null); setError(''); }
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -30,7 +30,7 @@ export default function Users() {
 
   async function handleEdit(u) {
     setEditing(u);
-    setForm({ name: u.name, email: u.email, password: '', role: u.role });
+    setForm({ name: u.name, email: u.email, phone: u.phone || '', password: '', role: u.role });
     setShowForm(true);
   }
 
@@ -57,6 +57,7 @@ export default function Users() {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <input className="p-3 rounded-lg border border-gold-200 bg-offwhite" placeholder="Nome *" value={form.name} onChange={e => setForm(prev => ({ ...prev, name: e.target.value }))} required />
             <input className="p-3 rounded-lg border border-gold-200 bg-offwhite" placeholder="Email *" type="email" value={form.email} onChange={e => setForm(prev => ({ ...prev, email: e.target.value }))} required />
+            <input className="p-3 rounded-lg border border-gold-200 bg-offwhite" placeholder="Celular (com DDD)" type="tel" value={form.phone} onChange={e => setForm(prev => ({ ...prev, phone: e.target.value }))} />
             <input className="p-3 rounded-lg border border-gold-200 bg-offwhite" placeholder={editing ? 'Nova senha (deixar vazio para manter)' : 'Senha *'} type="password" value={form.password} onChange={e => setForm(prev => ({ ...prev, password: e.target.value }))} required={!editing} />
             <select className="p-3 rounded-lg border border-gold-200 bg-offwhite text-brown-600" value={form.role} onChange={e => setForm(prev => ({ ...prev, role: e.target.value }))}>
               <option value="admin">Admin</option>
@@ -77,6 +78,7 @@ export default function Users() {
             <tr>
               <th className="text-left p-4 text-sm font-medium text-brown-700">Nome</th>
               <th className="text-left p-4 text-sm font-medium text-brown-700">Email</th>
+              <th className="text-left p-4 text-sm font-medium text-brown-700">Celular</th>
               <th className="text-left p-4 text-sm font-medium text-brown-700">Função</th>
               <th className="text-left p-4 text-sm font-medium text-brown-700">Criado em</th>
               <th className="text-right p-4 text-sm font-medium text-brown-700">Ações</th>
@@ -87,6 +89,7 @@ export default function Users() {
               <tr key={u.id} className="hover:bg-gold-50/50">
                 <td className="p-4 font-medium text-brown-800">{u.name}</td>
                 <td className="p-4 text-sm text-brown-600">{u.email}</td>
+                <td className="p-4 text-sm text-brown-600">{u.phone || '-'}</td>
                 <td className="p-4"><span className={`px-2 py-1 rounded-full text-xs font-medium ${u.role === 'admin' ? 'bg-gold-100 text-gold-700' : 'bg-brown-100 text-brown-600'}`}>{u.role}</span></td>
                 <td className="p-4 text-sm text-brown-500">{new Date(u.created_at).toLocaleDateString('pt-BR')}</td>
                 <td className="p-4 text-right">
@@ -95,7 +98,7 @@ export default function Users() {
                 </td>
               </tr>
             ))}
-            {users.length === 0 && <tr><td colSpan={5} className="p-8 text-center text-brown-400">Nenhum usuário encontrado</td></tr>}
+            {users.length === 0 && <tr><td colSpan={6} className="p-8 text-center text-brown-400">Nenhum usuário encontrado</td></tr>}
           </tbody>
         </table>
       </div>
@@ -108,6 +111,7 @@ export default function Users() {
               <div>
                 <p className="font-medium text-brown-800">{u.name}</p>
                 <p className="text-sm text-brown-500">{u.email}</p>
+                {u.phone && <p className="text-xs text-brown-400 mt-0.5">{u.phone}</p>}
               </div>
               <span className={`px-2 py-1 rounded-full text-xs font-medium shrink-0 ${u.role === 'admin' ? 'bg-gold-100 text-gold-700' : 'bg-brown-100 text-brown-600'}`}>{u.role}</span>
             </div>
