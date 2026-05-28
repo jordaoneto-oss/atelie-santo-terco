@@ -17,7 +17,7 @@ export default function Users() {
     setError('');
     try {
       if (editing) {
-        const body = { name: form.name, email: form.email, role: form.role };
+        const body = { name: form.name, email: form.email, phone: form.phone, role: form.role };
         if (form.password) body.password = form.password;
         await api.users.update(editing.id, body);
       } else {
