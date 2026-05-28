@@ -138,8 +138,8 @@ try { db.exec('ALTER TABLE products ADD COLUMN resina INTEGER DEFAULT 0'); } cat
 try { db.exec('ALTER TABLE products ADD COLUMN tipo_banho TEXT'); } catch {}
 try { db.exec('ALTER TABLE products ADD COLUMN detalhes_memo TEXT'); } catch {}
 try { db.exec('ALTER TABLE products ADD COLUMN categoria TEXT'); } catch {}
-try { db.exec("ALTER TABLE customers ADD COLUMN updated_at TEXT DEFAULT (datetime('now'))"); } catch {}
-try { db.exec("ALTER TABLE orders ADD COLUMN updated_at TEXT DEFAULT (datetime('now'))"); } catch {}
+try { db.exec("ALTER TABLE customers ADD COLUMN updated_at TEXT DEFAULT ''"); } catch {}
+try { db.exec("ALTER TABLE orders ADD COLUMN updated_at TEXT DEFAULT ''"); } catch {}
 try { db.exec("ALTER TABLE orders ADD COLUMN payment_method TEXT DEFAULT 'pix'"); } catch {}
 
 export default db;
